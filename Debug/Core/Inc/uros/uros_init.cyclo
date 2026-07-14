@@ -1,0 +1,10 @@
+../Core/Inc/uros/uros_init.cpp:34:6:void uros_init()	2
+../Core/Inc/uros/uros_init.cpp:56:6:void uros_agent_status_check()	6
+../Core/Inc/uros/uros_init.cpp:78:6:void handle_state_agent_waiting()	2
+../Core/Inc/uros/uros_init.cpp:81:6:void handle_state_agent_available()	1
+../Core/Inc/uros/uros_init.cpp:85:6:void handle_state_agent_connected()	3
+../Core/Inc/uros/uros_init.cpp:96:6:void handle_state_agent_trying()	3
+../Core/Inc/uros/uros_init.cpp:108:6:void handle_state_agent_disconnected()	1
+../Core/Inc/uros/uros_init.cpp:113:6:void uros_create_entities()	1
+../Core/Inc/uros/uros_init.cpp:138:6:void uros_destroy_entities()	1
+../Core/Inc/uros/uros_init.cpp:153:6:void mission_sub_cb(const void*)	2
