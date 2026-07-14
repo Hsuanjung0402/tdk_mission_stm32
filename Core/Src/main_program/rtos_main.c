@@ -21,7 +21,7 @@ void StartDefaultTask(void *argument)
 	for (;;)
 	{
 		uros_agent_status_check();
-		osDelay(1000/FREQUENCY);
+		osDelay(100/FREQUENCY);
 	}
 }
 
