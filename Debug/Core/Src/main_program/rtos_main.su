@@ -1,1 +1,2 @@
 ../Core/Src/main_program/rtos_main.c:17:6:StartDefaultTask	16	static
+../Core/Src/main_program/rtos_main.c:29:6:StartTask02	16	static

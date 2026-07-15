@@ -26,3 +26,11 @@ void StartDefaultTask(void *argument)
 	}
 }
 
+void StartTask02(void *argument)
+{
+	for (;;)
+	{
+		HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_0);
+		osDelay(1000);
+	}
+}
