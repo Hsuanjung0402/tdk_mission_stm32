@@ -8,9 +8,11 @@
 
 
 #include "stm32h7xx_hal.h"
-
+#include "mission_level.hpp"
 #include "uros_init.h"
 #include "cmsis_os2.h"
+
+int tim2 = 0;
 
 extern TIM_HandleTypeDef htim2;
 
@@ -26,11 +28,17 @@ void StartDefaultTask(void *argument)
 	}
 }
 
-void StartTask02(void *argument)
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-	for (;;)
-	{
-		HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_0);
-		osDelay(1000);
-	}
+  /* USER CODE BEGIN Callback 0 */
+  if (htim->Instance == TIM2)
+  {
+	tim2++;
+    mission_control();
+  }
+  /* USER CODE END Callback 0 */
+  if (htim->Instance == TIM17)
+  {
+    HAL_IncTick();
+  }
 }

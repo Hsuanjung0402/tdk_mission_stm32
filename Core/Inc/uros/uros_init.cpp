@@ -9,6 +9,7 @@
 
 
 #include "uros_init.h"
+#include "mission_level.hpp"
 #include <math.h>
 #include <string.h>
 #include <rmw_microros/time_sync.h>
@@ -24,12 +25,13 @@ rclc_executor_t executor;
 
 agent_status_t status = AGENT_WAITING;
 
-int mission_status = 0;
 
 int ping_fail_count = 0;
 #define MAX_PING_FAIL_COUNT 5
 
 extern UART_HandleTypeDef huart3;
+extern int mission_level;
+
 
 void uros_init(void) {
   // Initialize micro-ROS
@@ -155,6 +157,7 @@ void mission_sub_cb(const void *msgin){
     if (msg == NULL){
         return;
     }
-    mission_status = msg->data;
+    mission_level = msg->data;
+    mission_control();
 }
 

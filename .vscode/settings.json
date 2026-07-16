@@ -1,0 +1,8 @@
+{
+    "conventionalCommits.scopes": [
+        "FreeRTOS"
+        "MicroROS"
+        "Servo Motor"
+        "DC motror"
+    ]
+}

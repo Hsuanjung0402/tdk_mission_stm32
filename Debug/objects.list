@@ -11,6 +11,7 @@
 "./Core/Src/syscalls.o"
 "./Core/Src/sysmem.o"
 "./Core/Src/system_stm32h7xx.o"
+"./Core/Src/main_program/mission_level.o"
 "./Core/Src/main_program/rtos_main.o"
 "./Core/Startup/startup_stm32h723zgtx.o"
 "./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.o"
