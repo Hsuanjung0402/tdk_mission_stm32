@@ -1,8 +1,9 @@
 #include "mission_level.hpp"
 #include "cmsis_os2.h"
 #include "level_config.hpp"
+#include "stm32h7xx_hal.h"
 
-int mission_level = 0;
+volatile int mission_level = 0;
 int last_mission_level = 0;
 bool task_created = false;
 
@@ -41,7 +42,17 @@ void mission_control()
 
 void Startlevel_1(void *argument)
 {
-    osDelay(100);
+    for (;;)
+    {
+        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
+        osDelay(1000);
+        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
+        osDelay(1000);
+        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
+        osDelay(1000);
+        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
+        osDelay(1);
+    }
     osThreadExit();
 }
 
