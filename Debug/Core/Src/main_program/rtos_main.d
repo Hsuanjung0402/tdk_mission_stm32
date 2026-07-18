@@ -31,7 +31,6 @@ Core/Src/main_program/rtos_main.o: ../Core/Src/main_program/rtos_main.c \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h \
- ../Core/Src/main_program/mission_level.hpp \
  /home/hsuanjung/STM32CubeIDE/tdk_mission/tdk_mission_stm32/Core/Inc/uros/uros_init.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h \
@@ -199,6 +198,8 @@ Core/Src/main_program/rtos_main.o: ../Core/Src/main_program/rtos_main.c \
  /home/hsuanjung/STM32CubeIDE/tdk_mission/tdk_mission_stm32/Core/Inc/uros/uros_config.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
+ ../Core/Inc/initial.h ../Core/Inc/servo_control.h \
+ ../Core/Inc/motor_config.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h:
 ../Core/Inc/stm32h7xx_hal_conf.h:
@@ -232,7 +233,6 @@ Core/Src/main_program/rtos_main.o: ../Core/Src/main_program/rtos_main.c \
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h:
-../Core/Src/main_program/mission_level.hpp:
 /home/hsuanjung/STM32CubeIDE/tdk_mission/tdk_mission_stm32/Core/Inc/uros/uros_init.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
@@ -400,4 +400,7 @@ Core/Src/main_program/rtos_main.o: ../Core/Src/main_program/rtos_main.c \
 /home/hsuanjung/STM32CubeIDE/tdk_mission/tdk_mission_stm32/Core/Inc/uros/uros_config.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h:
+../Core/Inc/initial.h:
+../Core/Inc/servo_control.h:
+../Core/Inc/motor_config.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:

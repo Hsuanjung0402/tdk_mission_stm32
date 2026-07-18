@@ -9,7 +9,6 @@
 
 
 #include "uros_init.h"
-#include "mission_level.hpp"
 #include <math.h>
 #include <string.h>
 #include <rmw_microros/time_sync.h>
@@ -30,7 +29,7 @@ int ping_fail_count = 0;
 #define MAX_PING_FAIL_COUNT 5
 
 extern UART_HandleTypeDef huart3;
-extern int mission_level;
+int mission_level = 0;
 
 
 void uros_init(void) {
@@ -158,6 +157,5 @@ void mission_sub_cb(const void *msgin){
         return;
     }
     mission_level = msg->data;
-    mission_control();
 }
 

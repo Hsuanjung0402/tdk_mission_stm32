@@ -49,6 +49,8 @@ extern "C" {
 
 /* USER CODE END EM */
 
+void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
+
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
 
@@ -57,6 +59,13 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define TIANKONGRC_11kg_Pin GPIO_PIN_6
+#define TIANKONGRC_11kg_GPIO_Port GPIOA
+#define Gobilda_300_torque_Pin GPIO_PIN_7
+#define Gobilda_300_torque_GPIO_Port GPIOA
+#define Limit_Switch_Pin GPIO_PIN_2
+#define Limit_Switch_GPIO_Port GPIOB
+#define Limit_Switch_EXTI_IRQn EXTI2_IRQn
 
 /* USER CODE BEGIN Private defines */
 

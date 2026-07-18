@@ -197,8 +197,7 @@ Core/Inc/uros/uros_init.o: ../Core/Inc/uros/uros_init.cpp \
  /home/hsuanjung/STM32CubeIDE/tdk_mission/tdk_mission_stm32/micro_ros_stm32cubemx_utils/microros_static_library_ide/libmicroros/include/std_msgs/msg/detail/bool__type_support.h \
  ../Core/Inc/uros/uros_config.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h \
- ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
- /home/hsuanjung/STM32CubeIDE/tdk_mission/tdk_mission_stm32/Core/Src/main_program/mission_level.hpp
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h
 ../Core/Inc/uros/uros_init.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h:
 ../Core/Inc/stm32h7xx_hal_conf.h:
@@ -398,4 +397,3 @@ Core/Inc/uros/uros_init.o: ../Core/Inc/uros/uros_init.cpp \
 ../Core/Inc/uros/uros_config.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h:
-/home/hsuanjung/STM32CubeIDE/tdk_mission/tdk_mission_stm32/Core/Src/main_program/mission_level.hpp:

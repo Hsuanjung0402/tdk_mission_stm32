@@ -1,0 +1,2 @@
+../Core/Src/main_program/servo_control.c:22:6:servo_init	1
+../Core/Src/main_program/servo_control.c:28:6:set_servo_angle	6
