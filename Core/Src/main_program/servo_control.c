@@ -13,10 +13,7 @@
 
 extern TIM_HandleTypeDef htim3;
 
-#define per_1 7.3
-#define per_2 6.65
-
-int period = 100;
+volatile int period = 200;
 float pulse, unit;
 
 void servo_init()

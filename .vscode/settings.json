@@ -4,5 +4,6 @@
         "MicroROS"
         "Servo Motor"
         "DC motror"
+        "FreeRTOS & EXTI"
     ]
 }

@@ -5,6 +5,9 @@
  *      Author: hsuanjung
  */
 
+#define per_1 7.3
+#define per_2 6.65
+
 #define angle_1_1 0
 #define angle_1_2 180
 #define angle_2_1 40

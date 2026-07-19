@@ -14,6 +14,7 @@ extern TIM_HandleTypeDef htim3;
 
 void init_timer(){
     HAL_TIM_Base_Start_IT(&htim2);
-    HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_ALL );
+    HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1 );
+    HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2 );
 }
 
