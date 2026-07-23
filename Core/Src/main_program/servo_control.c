@@ -9,7 +9,7 @@
 #include "servo_control.h"
 #include "cmsis_os2.h"
 #include "stm32h7xx_hal.h"
-#include "motor_config.h"
+#include "servo_motor_config.h"
 
 extern TIM_HandleTypeDef htim3;
 

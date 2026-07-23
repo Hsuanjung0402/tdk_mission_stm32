@@ -199,7 +199,7 @@ Core/Src/main_program/rtos_main.o: ../Core/Src/main_program/rtos_main.c \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
  ../Core/Inc/initial.h ../Core/Inc/servo_control.h \
- ../Core/Inc/motor_config.h \
+ ../Core/Inc/dc_control.h ../Core/Inc/servo_motor_config.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h:
 ../Core/Inc/stm32h7xx_hal_conf.h:
@@ -402,5 +402,6 @@ Core/Src/main_program/rtos_main.o: ../Core/Src/main_program/rtos_main.c \
 ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h:
 ../Core/Inc/initial.h:
 ../Core/Inc/servo_control.h:
-../Core/Inc/motor_config.h:
+../Core/Inc/dc_control.h:
+../Core/Inc/servo_motor_config.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:

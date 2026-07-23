@@ -11,12 +11,13 @@
 #include "uros_init.h"
 #include "initial.h"
 #include "servo_control.h"
-#include "motor_config.h"
+#include "dc_control.h"
+#include "servo_motor_config.h"
 #include "cmsis_os2.h"
 #include <stdbool.h>
 
 int task_remain = 0;
-volatile int mission = 0, angle = 0;
+volatile int mission = 0, angle = 47;
 bool limsw = false;
 int task02 = 0;
 
@@ -25,6 +26,7 @@ void StartDefaultTask(void *argument)
 	init_timer();
 	servo_init();
 	uros_init();
+	dc_motor(0);
 	for (;;)
 	{
 		uros_agent_status_check();
@@ -33,10 +35,15 @@ void StartDefaultTask(void *argument)
 	}
 }
 
+extern TIM_HandleTypeDef htim3;
+
+
 void StartTask02(void *argument)
 {
 	for (;;)
 	{
+
+		__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_3, 500 + angle * per_1);
 		task02++;
 		switch (mission)
 		{
@@ -57,6 +64,29 @@ void StartTask02(void *argument)
 			set_servo_angle(1, angle_1_1, angle_1_2);
 			osDelay(500);
 			set_servo_angle(2, angle_2_1, angle_2_2);
+
+		case 3:
+			mission = 0;
+			limsw = false;
+			dc_motor(1);
+			while(!limsw){
+				osDelay(1);
+			}
+			dc_motor(0);
+			osDelay(500);
+			dc_motor(-1);
+			osDelay(200);
+			limsw = false;
+			while (!limsw)
+			{
+				osDelay(1);
+			}
+			dc_motor(0);
+			osDelay(300);
+			dc_motor(1);
+			osDelay(100);
+			dc_motor(0);
+			
 		default:
 			break;
 		}
