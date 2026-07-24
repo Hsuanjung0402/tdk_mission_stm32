@@ -18,7 +18,7 @@ extern "C" {
 class servo
 {
 public:
-    servo(TIM_HandleTypeDef* pwm, uint16_t channel, int prepare_angle, int initial_angle, int target_angle, int period, float per, int min_pwm, int max_pwm):
+    servo(TIM_HandleTypeDef* pwm, uint32_t channel, int prepare_angle, int initial_angle, int target_angle, int period, float per, int min_pwm, int max_pwm):
     _pwm(pwm), _channel(channel), _prepare_angle(prepare_angle), _initial_angle(initial_angle), _target_angle(target_angle), _period(period), _per(per) , _min_pwm(min_pwm), _max_pwm(max_pwm){}
     ~servo() = default;
 
@@ -28,14 +28,14 @@ public:
 private:
     TIM_HandleTypeDef* _pwm;
     uint16_t _channel;
-    int _prepare_angle;
-    int _initial_angle;
-    int _target_angle;
-    int _current_angle;
+    float _prepare_angle;
+    float _initial_angle;
+    float _target_angle;
+    float _current_angle;
     int _period;
     int _min_pwm;
     int _max_pwm;
-    int _pulse;
+    float _pulse;
     float _per;
     float _unit;
     float _delta;

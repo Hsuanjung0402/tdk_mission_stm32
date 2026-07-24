@@ -1,4 +1,4 @@
-../Core/Inc/servo_oop.hpp:21:5:servo::servo(TIM_HandleTypeDef*, uint16_t, int, int, int, int, float, int, int)	1
+../Core/Inc/servo_oop.hpp:21:5:servo::servo(TIM_HandleTypeDef*, uint32_t, int, int, int, int, float, int, int)	1
 ../Core/Src/main_program/servo_monitor.cpp:20:6:void servo_init()	1
 ../Core/Src/main_program/servo_monitor.cpp:26:6:void pusher()	1
 ../Core/Src/main_program/servo_monitor.cpp:34:1:void __static_initialization_and_destruction_0()	1
