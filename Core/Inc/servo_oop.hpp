@@ -15,32 +15,30 @@ extern "C" {
 #include "stm32h7xx_hal.h"
 #include "stm32h723xx.h"
 
-class servo
-{
-public:
-    servo(TIM_HandleTypeDef* pwm, uint32_t channel, int prepare_angle, int initial_angle, int target_angle, int period, float per, int min_pwm, int max_pwm):
-    _pwm(pwm), _channel(channel), _prepare_angle(prepare_angle), _initial_angle(initial_angle), _target_angle(target_angle), _period(period), _per(per) , _min_pwm(min_pwm), _max_pwm(max_pwm){}
-    ~servo() = default;
+    class servo
+    {
+    public:
+        servo(TIM_HandleTypeDef *pwm, uint32_t channel, int prepare_angle, int initial_angle, int target_angle, int period, float per, int min_pwm, int max_pwm) : _pwm(pwm), _channel(channel), _prepare_angle(prepare_angle), _initial_angle(initial_angle), _target_angle(target_angle), _period(period), _per(per), _min_pwm(min_pwm), _max_pwm(max_pwm) {}
+        ~servo() = default;
 
-    void initial_servo();
-    void set_angle(bool dir);
+        void initial_servo();
+        void set_angle(bool dir);
 
-private:
-    TIM_HandleTypeDef* _pwm;
-    uint16_t _channel;
-    float _prepare_angle;
-    float _initial_angle;
-    float _target_angle;
-    float _current_angle;
-    int _period;
-    int _min_pwm;
-    int _max_pwm;
-    float _pulse;
-    float _per;
-    float _unit;
-    float _delta;
-};
-
+    private:
+        TIM_HandleTypeDef *_pwm;
+        uint16_t _channel;
+        float _prepare_angle;
+        float _initial_angle;
+        float _target_angle;
+        float _current_angle;
+        int _period;
+        int _min_pwm;
+        int _max_pwm;
+        float _pulse;
+        float _per;
+        float _unit;
+        float _delta;
+    };
 
 #ifdef __cplusplus
 }

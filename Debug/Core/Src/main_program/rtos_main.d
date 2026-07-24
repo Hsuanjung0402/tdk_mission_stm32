@@ -198,7 +198,6 @@ Core/Src/main_program/rtos_main.o: ../Core/Src/main_program/rtos_main.c \
  /home/hsuanjung/STM32CubeIDE/tdk_mission/tdk_mission_stm32/Core/Inc/uros/uros_config.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
- ../Core/Inc/initial.h ../Core/Inc/servo_control.h \
  ../Core/Inc/servo_monitor.hpp ../Core/Inc/dc_control.h \
  ../Core/Inc/servo_motor_config.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h
@@ -401,8 +400,6 @@ Core/Src/main_program/rtos_main.o: ../Core/Src/main_program/rtos_main.c \
 /home/hsuanjung/STM32CubeIDE/tdk_mission/tdk_mission_stm32/Core/Inc/uros/uros_config.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h:
-../Core/Inc/initial.h:
-../Core/Inc/servo_control.h:
 ../Core/Inc/servo_monitor.hpp:
 ../Core/Inc/dc_control.h:
 ../Core/Inc/servo_motor_config.h:

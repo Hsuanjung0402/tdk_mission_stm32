@@ -10,21 +10,15 @@ CPP_SRCS += \
 
 C_SRCS += \
 ../Core/Src/main_program/dc_control.c \
-../Core/Src/main_program/initial.c \
-../Core/Src/main_program/rtos_main.c \
-../Core/Src/main_program/servo_control.c 
+../Core/Src/main_program/rtos_main.c 
 
 C_DEPS += \
 ./Core/Src/main_program/dc_control.d \
-./Core/Src/main_program/initial.d \
-./Core/Src/main_program/rtos_main.d \
-./Core/Src/main_program/servo_control.d 
+./Core/Src/main_program/rtos_main.d 
 
 OBJS += \
 ./Core/Src/main_program/dc_control.o \
-./Core/Src/main_program/initial.o \
 ./Core/Src/main_program/rtos_main.o \
-./Core/Src/main_program/servo_control.o \
 ./Core/Src/main_program/servo_monitor.o \
 ./Core/Src/main_program/servo_oop.o 
 
@@ -42,7 +36,7 @@ Core/Src/main_program/%.o Core/Src/main_program/%.su Core/Src/main_program/%.cyc
 clean: clean-Core-2f-Src-2f-main_program
 
 clean-Core-2f-Src-2f-main_program:
-	-$(RM) ./Core/Src/main_program/dc_control.cyclo ./Core/Src/main_program/dc_control.d ./Core/Src/main_program/dc_control.o ./Core/Src/main_program/dc_control.su ./Core/Src/main_program/initial.cyclo ./Core/Src/main_program/initial.d ./Core/Src/main_program/initial.o ./Core/Src/main_program/initial.su ./Core/Src/main_program/rtos_main.cyclo ./Core/Src/main_program/rtos_main.d ./Core/Src/main_program/rtos_main.o ./Core/Src/main_program/rtos_main.su ./Core/Src/main_program/servo_control.cyclo ./Core/Src/main_program/servo_control.d ./Core/Src/main_program/servo_control.o ./Core/Src/main_program/servo_control.su ./Core/Src/main_program/servo_monitor.cyclo ./Core/Src/main_program/servo_monitor.d ./Core/Src/main_program/servo_monitor.o ./Core/Src/main_program/servo_monitor.su ./Core/Src/main_program/servo_oop.cyclo ./Core/Src/main_program/servo_oop.d ./Core/Src/main_program/servo_oop.o ./Core/Src/main_program/servo_oop.su
+	-$(RM) ./Core/Src/main_program/dc_control.cyclo ./Core/Src/main_program/dc_control.d ./Core/Src/main_program/dc_control.o ./Core/Src/main_program/dc_control.su ./Core/Src/main_program/rtos_main.cyclo ./Core/Src/main_program/rtos_main.d ./Core/Src/main_program/rtos_main.o ./Core/Src/main_program/rtos_main.su ./Core/Src/main_program/servo_monitor.cyclo ./Core/Src/main_program/servo_monitor.d ./Core/Src/main_program/servo_monitor.o ./Core/Src/main_program/servo_monitor.su ./Core/Src/main_program/servo_oop.cyclo ./Core/Src/main_program/servo_oop.d ./Core/Src/main_program/servo_oop.o ./Core/Src/main_program/servo_oop.su
 
 .PHONY: clean-Core-2f-Src-2f-main_program
 

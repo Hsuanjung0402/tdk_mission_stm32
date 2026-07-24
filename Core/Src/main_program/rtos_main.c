@@ -9,22 +9,23 @@
 
 #include "stm32h7xx_hal.h"
 #include "uros_init.h"
-#include "initial.h"
-#include "servo_control.h"
 #include "servo_monitor.hpp"
 #include "dc_control.h"
 #include "servo_motor_config.h"
 #include "cmsis_os2.h"
 #include <stdbool.h>
 
-int task_remain = 0;
+int task_remain = 0, task02;
 volatile int mission = 0, angle = 47;
 bool limsw = false;
-int task02 = 0;
+
+extern TIM_HandleTypeDef htim2;
+// extern TIM_HandleTypeDef htim3;
+
 
 void StartDefaultTask(void *argument)
 {
-	init_timer();
+	HAL_TIM_Base_Start_IT(&htim2);
 	servo_init();
 	uros_init();
 	dc_motor(0);
@@ -32,20 +33,15 @@ void StartDefaultTask(void *argument)
 	{
 		uros_agent_status_check();
 		osDelay(100/FREQUENCY);
-		osDelay(1);
 	}
 }
-
-extern TIM_HandleTypeDef htim3;
-
 
 void StartTask02(void *argument)
 {
 	for (;;)
 	{
-
 		// __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_3, 500 + angle * per_1);
-//		__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, 500 + angle * per_2);
+		// __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, 500 + angle * per_2);
 		task02++;
 		switch (mission)
 		{
@@ -61,20 +57,14 @@ void StartTask02(void *argument)
 			mission = 0;
 			osDelay(1);
 			pusher();
-			// set_servo_angle(2, angle_2_2, angle_2_1);
-			// osDelay(500);
-			// set_servo_angle(1, angle_1_2, angle_1_1);
-			// osDelay(5000);
-			// set_servo_angle(1, angle_1_1, angle_1_2);
-			// osDelay(500);
-			// set_servo_angle(2, angle_2_1, angle_2_2);
 			break;
 
 		case 3:
 			mission = 0;
 			limsw = false;
 			dc_motor(1);
-			while(!limsw){
+			while (!limsw)
+			{
 				osDelay(1);
 			}
 			dc_motor(0);
@@ -91,7 +81,8 @@ void StartTask02(void *argument)
 			dc_motor(1);
 			osDelay(100);
 			dc_motor(0);
-			
+			break;
+
 		default:
 			break;
 		}
@@ -102,8 +93,9 @@ void StartTask02(void *argument)
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-	 if (HAL_GPIO_ReadPin(GPIOB, GPIO_Pin) == GPIO_PIN_SET) {
+	if (HAL_GPIO_ReadPin(GPIOB, GPIO_Pin) == GPIO_PIN_SET)
+	{
 		mission = 1;
 		limsw = true;
-	 }
+	}
 }
