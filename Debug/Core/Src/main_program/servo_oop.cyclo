@@ -1,0 +1,2 @@
+../Core/Src/main_program/servo_oop.cpp:13:6:void servo::initial_servo()	6
+../Core/Src/main_program/servo_oop.cpp:18:6:void servo::set_angle(bool)	16

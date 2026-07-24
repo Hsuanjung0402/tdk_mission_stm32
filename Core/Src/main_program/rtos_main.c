@@ -11,6 +11,7 @@
 #include "uros_init.h"
 #include "initial.h"
 #include "servo_control.h"
+#include "servo_monitor.hpp"
 #include "dc_control.h"
 #include "servo_motor_config.h"
 #include "cmsis_os2.h"
@@ -43,7 +44,8 @@ void StartTask02(void *argument)
 	for (;;)
 	{
 
-		__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_3, 500 + angle * per_1);
+		// __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_3, 500 + angle * per_1);
+//		__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, 500 + angle * per_2);
 		task02++;
 		switch (mission)
 		{
@@ -57,13 +59,16 @@ void StartTask02(void *argument)
 
 		case 2:
 			mission = 0;
-			set_servo_angle(2, angle_2_2, angle_2_1);
-			osDelay(500);
-			set_servo_angle(1, angle_1_2, angle_1_1);
-			osDelay(1000);
-			set_servo_angle(1, angle_1_1, angle_1_2);
-			osDelay(500);
-			set_servo_angle(2, angle_2_1, angle_2_2);
+			osDelay(1);
+			pusher();
+			// set_servo_angle(2, angle_2_2, angle_2_1);
+			// osDelay(500);
+			// set_servo_angle(1, angle_1_2, angle_1_1);
+			// osDelay(5000);
+			// set_servo_angle(1, angle_1_1, angle_1_2);
+			// osDelay(500);
+			// set_servo_angle(2, angle_2_1, angle_2_2);
+			break;
 
 		case 3:
 			mission = 0;

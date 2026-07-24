@@ -13,7 +13,7 @@
 #define angle_1_2 180
 
 //2-pusher-GOBILDA 300degrees TORQUE-PA7
-#define angle_2_1 40
+#define angle_2_1 42
 #define angle_2_2 126
 
 //2-screen-TIANKONGRC SERVO-PC8

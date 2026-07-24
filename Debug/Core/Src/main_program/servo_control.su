@@ -1,2 +1,0 @@
-../Core/Src/main_program/servo_control.c:19:6:servo_init	4	static
-../Core/Src/main_program/servo_control.c:25:6:set_servo_angle	32	static
