@@ -1,0 +1,7 @@
+../Core/Src/main_program/arm_test.cpp:16:5:int arm_init()	1
+../Core/Src/main_program/arm_test.cpp:42:5:int arm_test()	1
+../Core/Src/main_program/arm_test.cpp:57:10:void cpp_arm_init()	1
+../Core/Src/main_program/arm_test.cpp:61:10:void cpp_arm_test()	1
+../Core/Src/main_program/arm_test.cpp:65:10:void cpp_arm_update()	1
+../Core/Src/main_program/arm_test.cpp:71:1:void __static_initialization_and_destruction_0()	1
+../Core/Src/main_program/arm_test.cpp:71:1:cpp)	1
