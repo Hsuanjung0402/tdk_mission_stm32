@@ -1,0 +1,48 @@
+create new branch from hsan project
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# On branch main
+# Your branch is up to date with 'origin/main'.
+#
+# Changes to be committed:
+#	modified:   Core/Inc/encoder_dc.hpp
+#	new file:   Core/Inc/limit_sw.hpp
+#	modified:   Core/Inc/main.h
+#	new file:   Core/Src/limit_sw.cpp
+#	modified:   Core/Src/main.c
+#	modified:   Core/Src/main_program/arm_test.cpp
+#	modified:   Core/Src/main_program/encoder_dc.cpp
+#	modified:   Core/Src/main_program/rtos_main.c
+#	modified:   Core/Src/stm32h7xx_hal_msp.c
+#	modified:   Core/Src/stm32h7xx_it.c
+#	modified:   Debug/Core/Src/freertos.o
+#	new file:   Debug/Core/Src/limit_sw.cyclo
+#	new file:   Debug/Core/Src/limit_sw.d
+#	new file:   Debug/Core/Src/limit_sw.o
+#	new file:   Debug/Core/Src/limit_sw.su
+#	modified:   Debug/Core/Src/main.cyclo
+#	modified:   Debug/Core/Src/main.o
+#	modified:   Debug/Core/Src/main.su
+#	modified:   Debug/Core/Src/main_program/arm_test.cyclo
+#	modified:   Debug/Core/Src/main_program/arm_test.d
+#	modified:   Debug/Core/Src/main_program/arm_test.o
+#	modified:   Debug/Core/Src/main_program/arm_test.su
+#	modified:   Debug/Core/Src/main_program/encoder_dc.cyclo
+#	modified:   Debug/Core/Src/main_program/encoder_dc.o
+#	modified:   Debug/Core/Src/main_program/encoder_dc.su
+#	modified:   Debug/Core/Src/main_program/rtos_main.cyclo
+#	modified:   Debug/Core/Src/main_program/rtos_main.o
+#	modified:   Debug/Core/Src/main_program/rtos_main.su
+#	modified:   Debug/Core/Src/stm32h7xx_hal_msp.cyclo
+#	modified:   Debug/Core/Src/stm32h7xx_hal_msp.o
+#	modified:   Debug/Core/Src/stm32h7xx_hal_msp.su
+#	modified:   Debug/Core/Src/stm32h7xx_it.o
+#	modified:   Debug/Core/Src/subdir.mk
+#	modified:   Debug/Core/Startup/dma_transport.o
+#	modified:   Debug/objects.list
+#	modified:   Debug/tdk_mission_stm32-main.elf
+#	modified:   Debug/tdk_mission_stm32-main.list
+#	modified:   Debug/tdk_mission_stm32-main.map
+#	modified:   tdk_mission_stm32-main.ioc
+#

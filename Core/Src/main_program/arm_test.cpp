@@ -38,6 +38,7 @@ int arm_init(void)
     elbow.attach(&htim23, 26400.0f, &htim12, TIM_CHANNEL_1, GPIOD, GPIO_PIN_11);
     //shoulder.attach(&htim23, 3200.0f);
     
+
     return 0;
 }
 void homing()
@@ -60,13 +61,17 @@ void homing()
 int arm_test(void)
 {
     homing();
+    osDelay(1000);
 
     servo_base.setTargetAfter(1000, 10.0f, 2000.0f);
     servo_rotate.setTargetAfter(1200, 7.0f, 1000.0f);
+
     //servo_rotate.setTargetAfter(2000, 120.0f, 1000.0f);
     //servo_claw.setTargetAfter(8000, 30.0f, 1000.0f);
-    elbow.reset();
+
     shoulder.reset();
+    elbow.setTargetAngleAfter(5000, 90.0f, 2000);
+
 
 
     return 0;

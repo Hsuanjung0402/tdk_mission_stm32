@@ -120,13 +120,14 @@ void Encoder::update(float dt_seconds) {
 }
 void Encoder::reset() {
     if (!is_active) return;
+    __HAL_TIM_SET_COMPARE(pwm_htim, pwm_channel, 0); // 停止 PWM 輸出
     __HAL_TIM_SET_COUNTER(enc_htim, 0);
     current_count = 0;
     last_count = 0;
     current_rpm = 0.0f;
     target_rpm = 0.0f;
     pid_controller.reset();
-    __HAL_TIM_SET_COMPARE(pwm_htim, pwm_channel, 0); // 停止 PWM 輸出
+
 }
 void Encoder::setTargetAngleAfter(uint32_t delay_ms, float target_angle, uint32_t duration_ms) {
     current_state = EncoderState::WAITING;
@@ -138,7 +139,6 @@ void Encoder::setTargetAngleAfter(uint32_t delay_ms, float target_angle, uint32_
     target_counts = static_cast<int32_t>((target_angle / 360.0f) * ppr);
     
 }
-// 👉 補上靜態方法的實作：掃描陣列，更新所有已註冊的編碼器馬達
 void Encoder::updateAll(float dt_seconds) {
     for (int i = 0; i < registered_count; i++) {
         if (encoder_pool[i] != nullptr) {

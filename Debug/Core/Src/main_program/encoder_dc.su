@@ -2,7 +2,7 @@
 ../Core/Src/main_program/encoder_dc.cpp:23:6:void Encoder::attach(TIM_HandleTypeDef*, float, TIM_HandleTypeDef*, uint32_t, GPIO_TypeDef*, uint16_t)	32	static
 ../Core/Src/main_program/encoder_dc.cpp:55:6:void Encoder::setTargetRPM(float)	16	static
 ../Core/Src/main_program/encoder_dc.cpp:60:6:void Encoder::update(float)	56	static
-../Core/Src/main_program/encoder_dc.cpp:123:6:void Encoder::reset()	16	static
-../Core/Src/main_program/encoder_dc.cpp:133:6:void Encoder::setTargetAngleAfter(uint32_t, float, uint32_t)	24	static
-../Core/Src/main_program/encoder_dc.cpp:144:6:static void Encoder::updateAll(float)	24	static
-../Core/Src/main_program/encoder_dc.cpp:154:10:void Encoder_Update_All_C(float)	16	static
+../Core/Src/main_program/encoder_dc.cpp:121:6:void Encoder::reset()	16	static
+../Core/Src/main_program/encoder_dc.cpp:132:6:void Encoder::setTargetAngleAfter(uint32_t, float, uint32_t)	24	static
+../Core/Src/main_program/encoder_dc.cpp:143:6:static void Encoder::updateAll(float)	24	static
+../Core/Src/main_program/encoder_dc.cpp:153:10:void Encoder_Update_All_C(float)	16	static
