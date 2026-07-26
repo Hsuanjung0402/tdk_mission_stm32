@@ -67,9 +67,6 @@ void Error_Handler(void);
 #define TIANKONGRC_11kg_1_GPIO_Port GPIOA
 #define Gobilda_300_torque_Pin GPIO_PIN_7
 #define Gobilda_300_torque_GPIO_Port GPIOA
-#define Limit_Switch_Pin GPIO_PIN_2
-#define Limit_Switch_GPIO_Port GPIOB
-#define Limit_Switch_EXTI_IRQn EXTI2_IRQn
 #define GobildaArm_Pin GPIO_PIN_12
 #define GobildaArm_GPIO_Port GPIOD
 #define TIANKONGRC_11kg_2_Pin GPIO_PIN_8

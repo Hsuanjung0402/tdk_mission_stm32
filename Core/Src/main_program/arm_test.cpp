@@ -4,13 +4,15 @@
 #include "arm_test.hpp"
 #include "encoder_dc.hpp"
 #include "pid.hpp"
-
+#include "limit_sw.hpp"
 extern TIM_HandleTypeDef htim4, htim23, htim12; 
 Servo servo_base, servo_rotate, servo_claw, servo_wrist;
 Encoder elbow(5.0f, 0.0f, 0.0f, 3199.0f),
         shoulder(5.0f, 0.0f, 0.0f, 3199.0f);
+LimitSwitch homing_switch(GPIOG, GPIO_PIN_2); // 歸零用的微動開關
+volatile bool is_homing_done = false;
 
-float target_rpm = 10.0f;
+float target_rpm = 3.0f;
 // 【調整 1】加上 static，讓這些 ID 變成這份檔案的專屬變數，避免跟其他檔案變數撞名
 
 int arm_init(void)
@@ -38,16 +40,35 @@ int arm_init(void)
     
     return 0;
 }
+void homing()
+{
+    is_homing_done = false; // 重置旗標
 
+    elbow.setTargetAngleAfter(0,300.0f,2000);
+
+    // 持續檢查，直到開關被穩穩按下
+    while (!homing_switch.isPressed()) {
+        osDelay(5); 
+    }
+
+    // 撞到了！立刻重置馬達計數，這裡就是絕對 0 度
+    elbow.reset();
+    is_homing_done = true;
+
+
+}
 int arm_test(void)
 {
+    homing();
+
     servo_base.setTargetAfter(1000, 10.0f, 2000.0f);
     servo_rotate.setTargetAfter(1200, 7.0f, 1000.0f);
     //servo_rotate.setTargetAfter(2000, 120.0f, 1000.0f);
     //servo_claw.setTargetAfter(8000, 30.0f, 1000.0f);
     elbow.reset();
     shoulder.reset();
-    elbow.setTargetRPM(target_rpm);
+
+
     return 0;
 }
 
@@ -67,6 +88,18 @@ extern "C"
         Encoder::updateAll(0.01f); // 假設每次更新間隔 0.01 秒 (10 ms)
 
     }
-    
+
+    void arm_exti_handler(uint16_t GPIO_Pin)
+    {
+        // 這裡才是真正的判斷邏輯！
+        if (GPIO_Pin == homing_switch.getPin())
+        {
+            if (homing_switch.checkInterrupt())
+            {
+                elbow.reset();          // 瞬間煞停！
+                is_homing_done = true;  // 通知任務
+            }
+        }
+    }
 }
 

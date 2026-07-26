@@ -1,5 +1,4 @@
-Core/Src/main_program/arm_test.o: ../Core/Src/main_program/arm_test.cpp \
- ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
+Core/Src/limit_sw.o: ../Core/Src/limit_sw.cpp ../Core/Inc/limit_sw.hpp \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h \
  ../Core/Inc/stm32h7xx_hal_conf.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h \
@@ -31,11 +30,8 @@ Core/Src/main_program/arm_test.o: ../Core/Src/main_program/arm_test.cpp \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h \
- ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h \
- ../Core/Inc/servo.hpp ../Core/Inc/arm_test.hpp \
- ../Core/Inc/encoder_dc.hpp ../Core/Inc/pid.hpp ../Core/Inc/pid.hpp \
- ../Core/Inc/limit_sw.hpp
-../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
+ ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h
+../Core/Inc/limit_sw.hpp:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h:
 ../Core/Inc/stm32h7xx_hal_conf.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h:
@@ -68,9 +64,3 @@ Core/Src/main_program/arm_test.o: ../Core/Src/main_program/arm_test.cpp \
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h:
-../Core/Inc/servo.hpp:
-../Core/Inc/arm_test.hpp:
-../Core/Inc/encoder_dc.hpp:
-../Core/Inc/pid.hpp:
-../Core/Inc/pid.hpp:
-../Core/Inc/limit_sw.hpp:

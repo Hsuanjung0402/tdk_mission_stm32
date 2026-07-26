@@ -1,6 +1,7 @@
 "./Core/Inc/uros/uros_init.o"
 "./Core/Src/custom_memory_manager.o"
 "./Core/Src/freertos.o"
+"./Core/Src/limit_sw.o"
 "./Core/Src/main.o"
 "./Core/Src/microros_allocators.o"
 "./Core/Src/microros_time.o"

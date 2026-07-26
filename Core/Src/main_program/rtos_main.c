@@ -19,9 +19,8 @@
 
 int task_remain = 0;
 volatile int mission = 0, angle = 47;
-bool limsw = false;
 int task02 = 0;
-
+bool limsw;
 void StartDefaultTask(void *argument)
 {
 
@@ -108,10 +107,4 @@ void StartTask02(void *argument)
 	}
 }
 
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-	 if (HAL_GPIO_ReadPin(GPIOB, GPIO_Pin) == GPIO_PIN_SET) {
-		mission = 1;
-		limsw = true;
-	 }
-}
+

@@ -1,7 +1,10 @@
-../Core/Src/main_program/arm_test.cpp:16:5:int arm_init()	16	static
-../Core/Src/main_program/arm_test.cpp:42:5:int arm_test()	8	static
-../Core/Src/main_program/arm_test.cpp:57:10:void cpp_arm_init()	8	static
-../Core/Src/main_program/arm_test.cpp:61:10:void cpp_arm_test()	8	static
-../Core/Src/main_program/arm_test.cpp:65:10:void cpp_arm_update()	8	static
-../Core/Src/main_program/arm_test.cpp:71:1:void __static_initialization_and_destruction_0()	8	static
-../Core/Src/main_program/arm_test.cpp:71:1:cpp)	8	static
+../Core/Inc/limit_sw.hpp:21:14:uint16_t LimitSwitch::getPin() const	16	static
+../Core/Src/main_program/arm_test.cpp:18:5:int arm_init()	16	static
+../Core/Src/main_program/arm_test.cpp:43:6:void homing()	8	static
+../Core/Src/main_program/arm_test.cpp:60:5:int arm_test()	8	static
+../Core/Src/main_program/arm_test.cpp:78:10:void cpp_arm_init()	8	static
+../Core/Src/main_program/arm_test.cpp:82:10:void cpp_arm_test()	8	static
+../Core/Src/main_program/arm_test.cpp:86:10:void cpp_arm_update()	8	static
+../Core/Src/main_program/arm_test.cpp:92:10:void arm_exti_handler(uint16_t)	16	static
+../Core/Src/main_program/arm_test.cpp:104:1:void __static_initialization_and_destruction_0()	8	static
+../Core/Src/main_program/arm_test.cpp:104:1:cpp)	8	static
