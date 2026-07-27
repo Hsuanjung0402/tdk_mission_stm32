@@ -67,8 +67,17 @@ void Error_Handler(void);
 #define TIANKONGRC_11kg_1_GPIO_Port GPIOA
 #define Gobilda_300_torque_Pin GPIO_PIN_7
 #define Gobilda_300_torque_GPIO_Port GPIOA
+#define shoulder_dir_controller_Pin GPIO_PIN_10
+#define shoulder_dir_controller_GPIO_Port GPIOD
+#define elbow_dir_controller_Pin GPIO_PIN_11
+#define elbow_dir_controller_GPIO_Port GPIOD
 #define GobildaArm_Pin GPIO_PIN_12
 #define GobildaArm_GPIO_Port GPIOD
+#define elbow_limitswitch_pull_up_EXIT_Pin GPIO_PIN_2
+#define elbow_limitswitch_pull_up_EXIT_GPIO_Port GPIOG
+#define elbow_limitswitch_pull_up_EXIT_EXTI_IRQn EXTI2_IRQn
+#define Shoulder_limitswitch_pull_up_EXIT_Pin GPIO_PIN_3
+#define Shoulder_limitswitch_pull_up_EXIT_GPIO_Port GPIOG
 #define TIANKONGRC_11kg_2_Pin GPIO_PIN_8
 #define TIANKONGRC_11kg_2_GPIO_Port GPIOC
 

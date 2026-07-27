@@ -115,13 +115,6 @@ extern void Servo_Update_All(void); // 讓 main.c 認識這個 C++ 提供的更�
 extern void arm_exti_handler(uint16_t GPIO_Pin);
 /* USER CODE END PFP */
 
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-    arm_exti_handler(GPIO_Pin);
-}
-
-/* USER CODE END PFP */
-
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
@@ -545,6 +538,10 @@ static void MX_TIM12_Init(void)
   {
     Error_Handler();
   }
+  if (HAL_TIM_PWM_ConfigChannel(&htim12, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
+  {
+    Error_Handler();
+  }
   /* USER CODE BEGIN TIM12_Init 2 */
 
   /* USER CODE END TIM12_Init 2 */
@@ -695,7 +692,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOD, shoulder_dir_controller_Pin|elbow_dir_controller_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : dc_motor_screen_1_Pin dc_motor_screen_2_Pin */
   GPIO_InitStruct.Pin = dc_motor_screen_1_Pin|dc_motor_screen_2_Pin;
@@ -711,15 +708,15 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PD11 */
-  GPIO_InitStruct.Pin = GPIO_PIN_11;
+  /*Configure GPIO pins : shoulder_dir_controller_Pin elbow_dir_controller_Pin */
+  GPIO_InitStruct.Pin = shoulder_dir_controller_Pin|elbow_dir_controller_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PG2 */
-  GPIO_InitStruct.Pin = GPIO_PIN_2;
+  /*Configure GPIO pins : elbow_limitswitch_pull_up_EXIT_Pin Shoulder_limitswitch_pull_up_EXIT_Pin */
+  GPIO_InitStruct.Pin = elbow_limitswitch_pull_up_EXIT_Pin|Shoulder_limitswitch_pull_up_EXIT_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
@@ -728,8 +725,8 @@ static void MX_GPIO_Init(void)
   HAL_SYSCFG_AnalogSwitchConfig(SYSCFG_SWITCH_PA1, SYSCFG_SWITCH_PA1_CLOSE);
 
   /* EXTI interrupt init*/
-  HAL_NVIC_SetPriority(EXTI2_IRQn, 5, 0);
-  HAL_NVIC_EnableIRQ(EXTI2_IRQn);
+  HAL_NVIC_SetPriority(elbow_limitswitch_pull_up_EXIT_EXTI_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(elbow_limitswitch_pull_up_EXIT_EXTI_IRQn);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 

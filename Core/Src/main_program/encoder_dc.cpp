@@ -45,8 +45,6 @@ void Encoder::attach(TIM_HandleTypeDef* enc_timer, float pulses_per_rev,
     HAL_TIM_PWM_Start(pwm_htim, pwm_channel); // 啟動 PWM 輸出
     //__HAL_TIM_SET_COUNTER(pwm_htim, 0); // 強制歸零
 
-
-    // 👉 關鍵：把自己的指標 (this) 放進靜態池子裡
     if (registered_count < MAX_ENCODERS) {
         encoder_pool[registered_count] = this;
         registered_count++;
@@ -63,7 +61,6 @@ void Encoder::update(float dt_seconds) {
     current_count = static_cast<int32_t>(__HAL_TIM_GET_COUNTER(enc_htim));
     uint32_t current_time = HAL_GetTick();
 
-    // 👉 修正 2：RPM 與低通濾波統一在這裡算一次就好
     int32_t delta = current_count - last_count;
     float raw_rpm = (static_cast<float>(delta) / ppr) * (60.0f / dt_seconds);
     last_count = current_count; 
@@ -99,6 +96,7 @@ void Encoder::update(float dt_seconds) {
         }
     }
 
+
     // --- 輸出控制邏輯 ---
     int32_t error = target_counts - current_count;
     float p_gain = 2.0f; // 比例控制增益
@@ -122,6 +120,7 @@ void Encoder::reset() {
     if (!is_active) return;
     __HAL_TIM_SET_COMPARE(pwm_htim, pwm_channel, 0); // 停止 PWM 輸出
     __HAL_TIM_SET_COUNTER(enc_htim, 0);
+    final_target_counts = current_count;
     current_count = 0;
     last_count = 0;
     current_rpm = 0.0f;
