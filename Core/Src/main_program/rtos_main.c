@@ -28,7 +28,7 @@ volatile bool elbow_lim = false;
 volatile bool Homing = false;
 volatile int arm_command = 0;
 
-volatile test_angle_1 = 90, test_angle_2 = 90;
+volatile int target_angle_1 = 247,target_angle_2 = 48;
 
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
@@ -118,10 +118,12 @@ void StartTask02(void *argument)
 
 
 
+		case 999:
+			mechanism_command_id = 0;
+			__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, (uint32_t)(500 + 6.67 * target_angle_1));
+			__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, (uint32_t)(500 + 6.67 * target_angle_2));
+			break;
 
-
-
-		
 		case 1:// Test Light
 			mechanism_command_id = 0;	
 			HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_0);
