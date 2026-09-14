@@ -44,7 +44,7 @@ private:
 public:
     Servo(); // 預設建構子
     void attach(TIM_HandleTypeDef* timer, uint32_t ch, float per_degree, uint32_t offset);
-    void startAfter(uint32_t delay_ms);
+    void set_current_angle(float deg);
     void setTarget(float new_target, float time_ms);
     void setTargetAfter(uint32_t delay_ms, float new_target, float time_ms);
     void update();

@@ -8,11 +8,11 @@
 #ifndef SRC_MAIN_PROGRAM_MISSION_2_MS_2_CONFIG_H_
 #define SRC_MAIN_PROGRAM_MISSION_2_MS_2_CONFIG_H_
 
-#define init_reverse_distance 1080000
-#define down_reverse_distance 40000
-#define rotate_distance 2470000
+#define init_reverse_distance 10800000
+#define down_reverse_distance 400000
+#define rotate_distance 24700000
 
-#define Speed_210 500
+#define Speed_210 5000
 
 #define init_reverse_time (init_reverse_distance/Speed_210)
 #define down_reverse_time (down_reverse_distance/Speed_210)

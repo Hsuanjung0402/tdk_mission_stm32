@@ -4,7 +4,7 @@
 #include "pid.hpp"
 
 #define MAX_ENCODERS 4 // 最多支援 4 顆直交編碼器
-#define MAX_PWM 3199.0f // 最大 PWM 輸出值 (對應 100% duty cycle)
+#define HOMING_SPEED 700
 
 enum class EncoderState {
 	IDLE,       // 閒置中
@@ -54,6 +54,8 @@ public:
         TIM_HandleTypeDef* motor_timer, uint32_t motor_channel,GPIO_TypeDef* port, uint16_t pin1);
     void update(float dt_seconds);
     void reset();
+    void homing_cw();
+    void homing_ccw();
     void setTargetRPM(float rpm);
     void setTargetAngleAfter(uint32_t delay_ms, float target_angle, uint32_t duration_ms);
     // 👉 像你的 Servo 一樣，提供一個靜態方法來一次更新所有註冊的編碼器
