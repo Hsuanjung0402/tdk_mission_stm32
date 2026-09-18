@@ -28,7 +28,7 @@ volatile bool elbow_lim = false;
 volatile bool Homing = false;
 volatile int arm_command = 0;
 
-volatile int target_angle_1 = 247,target_angle_2 = 48;
+volatile int target_angle_1 = 248,target_angle_2 = 68;
 
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
@@ -75,7 +75,7 @@ void StartTask02(void *argument)
 			break;
 		case 2010: // pusher 升到最高點:
 			mechanism_command_id = 0;
-			__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, (uint32_t)(500 + 6.67 * 210));
+			__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, (uint32_t)(500 + 6.67 * 230));
 			break;
 		// navigation
 		case 202: // pusher extract
@@ -111,7 +111,7 @@ void StartTask02(void *argument)
 			break;
 		case 2011:	// push 從最高點放平
 			mechanism_command_id = 0;
-			__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, (uint32_t)(500 + 6.67 * 135));
+			__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, (uint32_t)(500 + 6.67 * 142));
 			break;
 
 

@@ -1,4 +1,0 @@
-../Core/Src/main_program/rtos_main.c:39:6:StartDefaultTask	16	static
-../Core/Src/main_program/rtos_main.c:52:6:StartTask02	16	static
-../Core/Src/main_program/rtos_main.c:178:6:StartTask03	16	static
-../Core/Src/main_program/rtos_main.c:188:6:HAL_GPIO_EXTI_Callback	16	static

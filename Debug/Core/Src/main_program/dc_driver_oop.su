@@ -1,4 +1,0 @@
-../Core/Src/main_program/dc_driver_oop.cpp:15:6:bool dc_driver::init_dc_driver()	16	static
-../Core/Src/main_program/dc_driver_oop.cpp:20:6:void dc_driver::stop()	16	static
-../Core/Src/main_program/dc_driver_oop.cpp:24:6:bool dc_driver::cw()	24	static
-../Core/Src/main_program/dc_driver_oop.cpp:41:6:bool dc_driver::ccw()	24	static
