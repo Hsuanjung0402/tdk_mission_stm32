@@ -1,5 +1,5 @@
-./Drivers/
-./.settings/
-./.vscode/
-./.Debug
-.Debug
+/build/
+/cmake-build-debug/
+/.settings/
+/.vscode/
+/Debug/
