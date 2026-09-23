@@ -20,15 +20,15 @@
 #include <string.h>
 #include <rmw_microros/time_sync.h>
 
-// rcl_subscription_t                          mechanism_command_sub;
-// robot_interfaces__msg__MechanismCommand     mechanism_command_msg;
+rcl_subscription_t                          mechanism_command_sub;
+robot_interfaces__msg__MechanismCommand     mechanism_command_msg;
 
-// volatile uint16_t  mechanism_command_id = 0;
-// volatile bool      mechanism_command_pending = false;
-// volatile uint32_t  mechanism_command_rx_count = 0;
+volatile uint16_t  mechanism_command_id = 0;
+volatile bool      mechanism_command_pending = false;
+volatile uint32_t  mechanism_command_rx_count = 0;
 
 /* 除錯用：可以在 Live Expressions 直接看到收到的字串 */
-// char mechanism_command_name_dbg[32] = {0};
+char mechanism_command_name_dbg[32] = {0};
 
 rclc_support_t support;
 rcl_allocator_t allocator;
@@ -60,26 +60,26 @@ extern UART_HandleTypeDef huart3;
  *       robot_interfaces__msg__MechanismCommand__init() / __fini()，
  *       __fini() 會把靜態陣列丟給 allocator.deallocate() → heap 損毀。
  * ------------------------------------------------------------------ */
-// #define MECH_CMD_NAME_CAPACITY   64
-// #define MECH_CMD_JSON_CAPACITY  256
+#define MECH_CMD_NAME_CAPACITY   64
+#define MECH_CMD_JSON_CAPACITY  256
 
-// static char mech_cmd_name_buf[MECH_CMD_NAME_CAPACITY];
-// static char mech_cmd_json_buf[MECH_CMD_JSON_CAPACITY];
+static char mech_cmd_name_buf[MECH_CMD_NAME_CAPACITY];
+static char mech_cmd_json_buf[MECH_CMD_JSON_CAPACITY];
 
-// static void mechanism_command_msg_bind_buffers(void)
-// {
-//   mechanism_command_msg.command_id = 0;
+static void mechanism_command_msg_bind_buffers(void)
+{
+  mechanism_command_msg.command_id = 0;
 
-//   mech_cmd_name_buf[0] = '\0';
-//   mechanism_command_msg.command_name.data     = mech_cmd_name_buf;
-//   mechanism_command_msg.command_name.size     = 0;
-//   mechanism_command_msg.command_name.capacity = MECH_CMD_NAME_CAPACITY;
+  mech_cmd_name_buf[0] = '\0';
+  mechanism_command_msg.command_name.data     = mech_cmd_name_buf;
+  mechanism_command_msg.command_name.size     = 0;
+  mechanism_command_msg.command_name.capacity = MECH_CMD_NAME_CAPACITY;
 
-//   mech_cmd_json_buf[0] = '\0';
-//   mechanism_command_msg.arg_json.data     = mech_cmd_json_buf;
-//   mechanism_command_msg.arg_json.size     = 0;
-//   mechanism_command_msg.arg_json.capacity = MECH_CMD_JSON_CAPACITY;
-// }
+  mech_cmd_json_buf[0] = '\0';
+  mechanism_command_msg.arg_json.data     = mech_cmd_json_buf;
+  mechanism_command_msg.arg_json.size     = 0;
+  mechanism_command_msg.arg_json.capacity = MECH_CMD_JSON_CAPACITY;
+}
 
 void uros_init(void) {
   // Initialize micro-ROS
@@ -192,22 +192,22 @@ void uros_create_entities(void) {
   if (rc != RCL_RET_OK) { uros_last_error = 2000 + (int)rc; }
 
   /* 關鍵：綁定靜態字串緩衝區（取代 MechanismCommand__init） */
-  // mechanism_command_msg_bind_buffers();
+  mechanism_command_msg_bind_buffers();
 
-  // rc = rclc_subscription_init_default(
-  //   &mechanism_command_sub,
-  //   &node,
-  //   ROSIDL_GET_MSG_TYPE_SUPPORT(robot_interfaces, msg, MechanismCommand),
-  //   "/mechanism/command");
-  // if (rc != RCL_RET_OK) { uros_last_error = 3000 + (int)rc; }
+  rc = rclc_subscription_init_default(
+    &mechanism_command_sub,
+    &node,
+    ROSIDL_GET_MSG_TYPE_SUPPORT(robot_interfaces, msg, MechanismCommand),
+    "/mechanism/command");
+  if (rc != RCL_RET_OK) { uros_last_error = 3000 + (int)rc; }
 
   rc = rclc_executor_init(&executor, &support.context, 1, &allocator);
   if (rc != RCL_RET_OK) { uros_last_error = 4000 + (int)rc; }
 
-  // rc = rclc_executor_add_subscription(
-  //   &executor, &mechanism_command_sub, &mechanism_command_msg,
-  //   &mechanism_command_cb, ON_NEW_DATA);
-  // if (rc != RCL_RET_OK) { uros_last_error = 5000 + (int)rc; }
+  rc = rclc_executor_add_subscription(
+    &executor, &mechanism_command_sub, &mechanism_command_msg,
+    &mechanism_command_cb, ON_NEW_DATA);
+  if (rc != RCL_RET_OK) { uros_last_error = 5000 + (int)rc; }
 }
 
 void uros_destroy_entities(void) {
@@ -215,7 +215,7 @@ void uros_destroy_entities(void) {
   (void) rmw_uros_set_context_entity_destroy_session_timeout(rmw_context, 0);
 
   // Destroy subscriber
-  // rcl_subscription_fini(&mechanism_command_sub, &node);
+  rcl_subscription_fini(&mechanism_command_sub, &node);
 
   /* 不要呼叫 MechanismCommand__fini()：字串指向靜態陣列，free 會炸 heap */
 
@@ -225,24 +225,24 @@ void uros_destroy_entities(void) {
   rclc_support_fini(&support);
 }
 
-// void mechanism_command_cb(const void *msgin) {
-//   const robot_interfaces__msg__MechanismCommand *msg =
-//       (const robot_interfaces__msg__MechanismCommand *)msgin;
-//   if (msg == NULL) {
-//     return;
-//   }
+void mechanism_command_cb(const void *msgin) {
+  const robot_interfaces__msg__MechanismCommand *msg =
+      (const robot_interfaces__msg__MechanismCommand *)msgin;
+  if (msg == NULL) {
+    return;
+  }
 
-//   mechanism_command_rx_count++;
+  mechanism_command_rx_count++;
 
-//   /* 除錯用：把 command_name 抄一份出來，Live Expressions 可直接看 */
-//   size_t n = msg->command_name.size;
-//   if (n >= sizeof(mechanism_command_name_dbg)) {
-//     n = sizeof(mechanism_command_name_dbg) - 1;
-//   }
-//   memcpy(mechanism_command_name_dbg, msg->command_name.data, n);
-//   mechanism_command_name_dbg[n] = '\0';
+  /* 除錯用：把 command_name 抄一份出來，Live Expressions 可直接看 */
+  size_t n = msg->command_name.size;
+  if (n >= sizeof(mechanism_command_name_dbg)) {
+    n = sizeof(mechanism_command_name_dbg) - 1;
+  }
+  memcpy(mechanism_command_name_dbg, msg->command_name.data, n);
+  mechanism_command_name_dbg[n] = '\0';
 
-//   mechanism_command_id = msg->command_id;
-//   mechanism_command_pending = true;
-// }
+  mechanism_command_id = msg->command_id;
+  mechanism_command_pending = true;
+}
 

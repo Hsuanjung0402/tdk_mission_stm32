@@ -20,7 +20,6 @@
 #define elbow_homing_switch GPIO_PIN_4 
 
 int task_remain = 0, task02 = 0;
-volatile int mechanism_command_id = 0, angle = 47;
 volatile bool limsw = false;
 volatile bool Prepared = false;
 volatile bool shoulder_lim = false;

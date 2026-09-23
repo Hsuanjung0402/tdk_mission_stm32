@@ -20,7 +20,7 @@
 #include <rmw_microros/rmw_microros.h>
 #include <std_msgs/msg/int32.h>
 #include <std_msgs/msg/bool.h>
-// #include <robot_interfaces/msg/mechanism_command.h>
+#include <robot_interfaces/msg/mechanism_command.h>
 
 #include "uros_config.h"
 #include "timers.h"
@@ -29,16 +29,16 @@
 extern "C" {
 #endif
 
-// extern rcl_subscription_t                          mechanism_command_sub;
-// extern robot_interfaces__msg__MechanismCommand      mechanism_command_msg;
+extern rcl_subscription_t                          mechanism_command_sub;
+extern robot_interfaces__msg__MechanismCommand      mechanism_command_msg;
 
 /* 由 mechanism_command_cb 更新，供 rtos_main.c 的 StartTask02 讀取後 dispatch */
-// extern volatile uint16_t  mechanism_command_id;
-// extern volatile bool      mechanism_command_pending;
+extern volatile uint16_t  mechanism_command_id;
+extern volatile bool      mechanism_command_pending;
 
 /* printf 目前經由 huart3 (與 micro-ROS transport 共用) 無法輸出，
  * 用這個計數器在除錯視窗 (Live Expressions) 確認 callback 是否真的被觸發 */
-// extern volatile uint32_t  mechanism_command_rx_count;
+extern volatile uint32_t  mechanism_command_rx_count;
 
 bool cubemx_transport_open(struct uxrCustomTransport * transport);
 bool cubemx_transport_close(struct uxrCustomTransport * transport);
@@ -71,7 +71,7 @@ void handle_state_agent_disconnected(void);
 void uros_create_entities(void);
 void uros_destroy_entities(void);
 
-// void mechanism_command_cb(const void* msgin);
+void mechanism_command_cb(const void* msgin);
 
 #ifdef __cplusplus
 }
