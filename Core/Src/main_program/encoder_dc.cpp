@@ -152,12 +152,14 @@ void Encoder::reset() {
 
 void Encoder::homing_cw()
 {
+    if (!is_active) return; // 沒 attach 時 dir_port / pwm_htim 是 nullptr，寫下去會 HardFault
     HAL_GPIO_WritePin(dir_port, dir_pin1, GPIO_PIN_SET);
     __HAL_TIM_SET_COMPARE(pwm_htim, pwm_channel, HOMING_SPEED);
 }
 
 void Encoder::homing_ccw()
 {
+    if (!is_active) return; // 沒 attach 時 dir_port / pwm_htim 是 nullptr，寫下去會 HardFault
     HAL_GPIO_WritePin(dir_port, dir_pin1, GPIO_PIN_RESET);
     __HAL_TIM_SET_COMPARE(pwm_htim, pwm_channel, HOMING_SPEED);
 }
@@ -165,12 +167,14 @@ void Encoder::homing_ccw()
 
 void Encoder::homing_cw(int speed)
 {
+    if (!is_active) return; // 沒 attach 時 dir_port / pwm_htim 是 nullptr，寫下去會 HardFault
     HAL_GPIO_WritePin(dir_port, dir_pin1, GPIO_PIN_SET);
     __HAL_TIM_SET_COMPARE(pwm_htim, pwm_channel, speed);
 }
 
 void Encoder::homing_ccw(int speed)
 {
+    if (!is_active) return; // 沒 attach 時 dir_port / pwm_htim 是 nullptr，寫下去會 HardFault
     HAL_GPIO_WritePin(dir_port, dir_pin1, GPIO_PIN_RESET);
     __HAL_TIM_SET_COMPARE(pwm_htim, pwm_channel, speed);
 }
