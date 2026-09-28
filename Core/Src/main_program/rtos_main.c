@@ -179,6 +179,7 @@ void StartTask02(void *argument)
     		__HAL_TIM_SET_COUNTER(&htim24, 0); 
 			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET); 
 			__HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_2, (uint32_t)(50));
+			break; 
 		case 10001:
 			mechanism_command_id = 0;
 			cpp_arm_homing();
@@ -242,7 +243,7 @@ static void straw_switch_poll(void)
 	static bool stable = false;
 	static uint32_t raw_change_tick = 0;
 
-	bool raw = (HAL_GPIO_ReadPin(Trigger_GPIO_Port, Trigger_Pin) == GPIO_PIN_SET);
+	bool raw = (HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_1) == GPIO_PIN_SET);
 	uint32_t now = HAL_GetTick();
 
 	if (raw != raw_last)
