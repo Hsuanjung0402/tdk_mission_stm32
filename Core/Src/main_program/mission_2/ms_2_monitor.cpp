@@ -56,4 +56,13 @@ void MS_2_close_pink(){
 void MS_2_close_blue(){
     MS_2.close_blue();
 }
+
+void MS_2_CW_time(int TIME){
+    MS_2.cw_time(TIME);
+}
+
+void MS_2_CCW_time(int TIME){
+    MS_2.ccw_time(TIME);
+}
+
 }

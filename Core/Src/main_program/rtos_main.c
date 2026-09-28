@@ -13,19 +13,28 @@
 #include "arm_test.hpp"
 #include "servo_motor_config.h"
 #include "ms_2_monitor.h"
+#include "fork.hpp"
 #include "cmsis_os2.h"
 #include <stdbool.h>
 
 #define shoulder_homing_switch GPIO_PIN_3 
 #define elbow_homing_switch GPIO_PIN_4 
+#define take_hay_bale 99
 
-int task_remain = 0, task02 = 0;
+int task_remain = 0, task02 = 0, task03 = 0;
 volatile bool limsw = false;
 volatile bool Prepared = false;
 volatile bool shoulder_lim = false;
 volatile bool elbow_lim = false;
-volatile bool Homing = false;
-volatile int arm_command = 0;
+volatile bool Homing_arm = false;
+volatile bool Homing_fork = false;
+volatile int arm_command = 0, fork_command = 0;
+volatile bool trigger = false;
+volatile bool fork_lim = false;
+volatile int Rotate_time = 0;
+volatile bool trigger_enable = true;
+volatile int counter = 0;
+volatile bool hay_bale_put = false;
 
 volatile int target_angle_1 = 248,target_angle_2 = 68;
 
@@ -34,12 +43,14 @@ extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
 extern TIM_HandleTypeDef htim12;
 extern TIM_HandleTypeDef htim24;
+extern bool hay_bale_took;
 
 void StartDefaultTask(void *argument)
 {
 	HAL_TIM_Base_Start_IT(&htim2);
 	servo_init();
-	// cpp_arm_init(); 
+	cpp_arm_init(); 
+	cpp_fork_init();
  	uros_init();
 	for (;;)
 	{
@@ -123,6 +134,17 @@ void StartTask02(void *argument)
 			__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, (uint32_t)(500 + 6.67 * target_angle_2));
 			break;
 
+
+		case 111:
+			mechanism_command_id = 0;
+			MS_2_CW_time(Rotate_time);
+			break;
+
+		case 112:
+			mechanism_command_id = 0;
+			MS_2_CCW_time(Rotate_time);
+			break;
+
 		case 1:// Test Light
 			mechanism_command_id = 0;	
 			HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_0);
@@ -162,15 +184,36 @@ void StartTask02(void *argument)
 			mechanism_command_id = 0;
 			cpp_arm_script(arm_command);
 			break;
-
-
-
-
+		case 20001:
+			mechanism_command_id = 0;
+			cpp_fork_homing();
+			break;
+		case 20003:
+			mechanism_command_id = 0;
+			cpp_fork_pos(fork_command);
+			break;
 
 		default:
 			break;
 		}
-	osDelay(1);
+		if (trigger && trigger_enable)// need to test if trigger_enable needed or unuse
+		{
+			trigger_enable = false;
+			trigger = false;
+			counter++;
+			cpp_arm_script(take_hay_bale);
+			while(!hay_bale_took){
+				osDelay(1);
+			}
+			cpp_arm_script(counter);
+			while(!hay_bale_put){
+				if( counter >= 4 ){
+					cpp_fork_pos(2);
+				}
+			}
+			trigger_enable = true;
+		}
+		osDelay(1);
 	}
 }
 
@@ -178,7 +221,8 @@ void StartTask03(void *argument)
 {
 		for (;;)
 		{
-			if(!Homing)cpp_arm_update();
+			task03++;
+			if(!Homing_arm && !Homing_fork)cpp_arm_update();
 			task_remain = uxTaskGetStackHighWaterMark(NULL);
 			osDelay(1);
 		}
@@ -190,4 +234,43 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	{
 		limsw = true;
 	}
+
+	if (HAL_GPIO_ReadPin(GPIOD, GPIO_Pin) == GPIO_PIN_SET)
+	{
+		if (GPIO_Pin == GPIO_PIN_3)
+		{
+			fork_lim = true;
+		}
+		else
+		{
+			trigger = true;
+		}
+	}
+	// if (HAL_GPIO_ReadPin(GPIOD, GPIO_Pin) == GPIO_PIN_SET)
+	// {
+	// 	if (GPIO_Pin == GPIO_PIN_1)
+	// 	{
+	// 		uint32_t trigger_current_time = HAL_GetTick();
+	// 		uint32_t trigger_last_time;
+	// 		if (trigger_current_time - trigger_last_time >= 2000)
+	// 		{
+	// 			trigger++;
+	// 		}
+	// 		trigger_last_time = trigger_current_time;
+	// 	}
+	// }
+
+	// uint32_t trigger_current_time = HAL_GetTick();
+	// if (GPIO_Pin == GPIO_PIN_1)
+	// {
+	// 	if (HAL_GPIO_ReadPin(GPIOD, GPIO_Pin) == GPIO_PIN_SET)
+	// 	{
+	// 		uint32_t trigger_last_time;
+	// 		if (trigger_current_time - trigger_last_time >= 2000)
+	// 		{
+	// 			trigger++;
+	// 		}
+	// 		trigger_last_time = trigger_current_time;
+	// 	}
+	// }
 }

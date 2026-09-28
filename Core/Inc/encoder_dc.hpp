@@ -56,6 +56,8 @@ public:
     void reset();
     void homing_cw();
     void homing_ccw();
+    void homing_cw(int);
+    void homing_ccw(int);
     void setTargetRPM(float rpm);
     void setTargetAngleAfter(uint32_t delay_ms, float target_angle, uint32_t duration_ms);
     // 👉 像你的 Servo 一樣，提供一個靜態方法來一次更新所有註冊的編碼器

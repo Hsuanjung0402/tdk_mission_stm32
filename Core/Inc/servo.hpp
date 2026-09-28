@@ -37,7 +37,7 @@ private:
     uint32_t channel;
     float current_angle, target_angle, step_unit, pulse_per_degree;
     uint32_t pulse_offset;
-    static constexpr float UPDATE_PERIOD_MS = 3.0f;
+    static constexpr float UPDATE_PERIOD_MS = 1.0f;
     int wait_duration; // 等待時間 (ms)
     uint32_t wait_start_time; // 等待開始的 Tick 時間  
 

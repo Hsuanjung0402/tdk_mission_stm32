@@ -6,9 +6,11 @@
 #include "pid.hpp"
 #include "limit_sw.hpp"
 extern TIM_HandleTypeDef htim5, htim23, htim12, htim24; 
-extern volatile bool Homing;
+extern volatile bool Homing_arm;
+extern volatile bool hay_bale_put;
 volatile float test_p = 3.0f;
 volatile float test_i = 0.0f;
+volatile bool hay_bale_took = false;
 Servo servo_base, servo_rotate, servo_claw, servo_wrist;
 Encoder elbow(3.0f, 0.3f, 0.0f, 3199.0f),
         shoulder(3.0f, 0.0f, 0.0f, 3199.0f);
@@ -30,7 +32,7 @@ int arm_init(void)
     servo_base.attach(&htim5, TIM_CHANNEL_1, 6.6667f, 800);
     servo_rotate.attach(&htim5, TIM_CHANNEL_2, 6.6667f, 800);
     servo_claw.attach(&htim5, TIM_CHANNEL_3, 6.6667f, 900);
-    servo_wrist.attach(&htim5, TIM_CHANNEL_4, 7.3f, 600);
+    servo_wrist.attach(&htim5, TIM_CHANNEL_4, 7.3f, 500);
     elbow.attach(&htim23, 26400.0f, &htim12, TIM_CHANNEL_1, GPIOD, GPIO_PIN_11);
     shoulder.attach(&htim24, 16100.0f, &htim12, TIM_CHANNEL_2, GPIOD, GPIO_PIN_10);
 
@@ -40,7 +42,7 @@ int arm_init(void)
 }
 void homing()
 {
-    Homing = true;
+    Homing_arm = true;
 
     is_homing_done[0] = false; //reset elbow homing status
     is_homing_done[1] = false; //reset shoulder homing status
@@ -55,7 +57,7 @@ void homing()
     shoulder.reset();
     is_homing_done[1] = true;
 
-    elbow.homing_ccw();
+    elbow.homing_ccw(1800);
 
     while (!elbow_homing_switch.isPressed()) {
         osDelay(1); 
@@ -65,7 +67,7 @@ void homing()
     elbow.reset();
     is_homing_done[0] = true;
 
-    Homing = false;
+    Homing_arm = false;
 
 }
 
@@ -73,8 +75,8 @@ volatile float elbow_test_angle = 8.0f;
 volatile float shoulder_test_angle = 25.0f;
 volatile float servo_base_test_angle = 35.0f;
 volatile float servo_rotate_test_angle = 110.0f;
-volatile float servo_claw_test_angle = 45.0f;
-volatile float servo_wrist_test_angle = 0.0f;
+volatile float servo_claw_test_angle = 70.0f;
+volatile float servo_wrist_test_angle = 5.0f;
 
 void arm_homing(void){
     homing();
@@ -83,18 +85,20 @@ void arm_homing(void){
 
     elbow.setTargetAngleAfter(0, 8.0f, 500);
     shoulder.setTargetAngleAfter(0, 25.0f, 500);
+    servo_base.setTargetAfter( 500, 35.0f, 2000);
+
 }
 
 void arm_init_servo(void){
-    servo_base.set_current_angle(35.0f);
-    servo_wrist.set_current_angle(0.0f);
+    servo_base.set_current_angle(125.0f);
+    servo_wrist.set_current_angle(5.0f);
     servo_rotate.set_current_angle(110.0f);
-    servo_claw.set_current_angle(45.0f);
+    servo_claw.set_current_angle(70.0f);
     
-    servo_base.setTargetAfter(0, 35.0f, 3000);
-    servo_wrist.setTargetAfter(0, 0.0f, 3000);
+    servo_base.setTargetAfter(0, 125.0f, 3000);
+    servo_wrist.setTargetAfter(10, 5.0f, 3000);
     servo_rotate.setTargetAfter(0, 110.0f, 3000);
-    servo_claw.setTargetAfter(0, 45.0f, 3000);
+    servo_claw.setTargetAfter(0, 70.0f, 3000);
 }
 
 int arm_test(void)
@@ -108,25 +112,99 @@ int arm_test(void)
     return 0;
 }
 
+/*
+look from the robot center
+             10
+
+          8     9
+
+       5     6     7 
+
+    1     2     3     4       
+*/
+
 void arm_script(int Command){
+    /*
+        shoulder motor max speed    :    96 deg/s
+        elbow motor max speed       :    60 deg/s
+    */
     switch (Command)
     {
-    case 1:
+    case 99: // take hay bale
+        hay_bale_took = false;
+        hay_bale_put = false;
+        
         elbow.setTargetAngleAfter(0, 50, 1000);
         shoulder.setTargetAngleAfter(0, 70, 1000);
 
-        elbow.setTargetAngleAfter(4000, 70, 1000);
-        shoulder.setTargetAngleAfter(4000, 140, 1000);
+        elbow.setTargetAngleAfter(1000, 70, 1000);
+        shoulder.setTargetAngleAfter(1000, 140, 1000);
+        servo_claw.setTargetAfter(1000, 40, 1000);
 
-        elbow.setTargetAngleAfter(6000, 90, 1000);
-        shoulder.setTargetAngleAfter(6000, 175, 1000);
-        
-        shoulder.setTargetAngleAfter(5000, 180, 1000);
-        servo_rotate.setTargetAfter(5000, 105, 1000);
+        osDelay(2000);
 
-        servo_claw.setTargetAfter(5000, 90, 1000);
+        elbow.setTargetAngleAfter(1000, 100, 1000);
+        shoulder.setTargetAngleAfter(1000, 175, 1000);
+
+        shoulder.setTargetAngleAfter(2000, 183, 1000);
+        servo_rotate.setTargetAfter(2000, 95, 1000);
+
+
+        osDelay(3000);
+
+        servo_claw.setTargetAfter(0, 96, 1000);
+
+        hay_bale_took = true;
         break;
-    
+
+    case 11: // from fork to hay bale pos
+        shoulder.setTargetAngleAfter(0, 90, 2000);
+        elbow.setTargetAngleAfter(0, 100, 2000);
+        servo_claw.setTargetAfter(0, 70, 2000);
+        servo_rotate.setTargetAfter(0, 110,2000);
+        servo_base.setTargetAfter(2000, 35, 2000);
+
+        osDelay(4000);
+
+        shoulder.setTargetAngleAfter(0, 25, 500);
+        elbow.setTargetAngleAfter(0, 8, 500);
+        break;
+
+    case 1: // put to the 1 pos
+        shoulder.setTargetAngleAfter(0, 90, 1000);
+
+        servo_base.setTargetAfter(2000, 180, 2000);
+
+        osDelay(4000);
+
+        servo_rotate.setTargetAfter(0, 130, 1000);
+        elbow.setTargetAngleAfter(0, 60, 1000);
+        shoulder.setTargetAngleAfter(0, 110, 1000);
+
+
+        servo_claw.setTargetAfter(1000, 85, 500);
+
+        hay_bale_put = true;
+        break;
+
+    case 2: // put to the 2 pos
+        break;
+    case 3: // put to the 3 pos
+        break;
+    case 4: // put to the 4 pos
+        break;
+    case 5: // put to the 5 pos
+        break;
+    case 6: // put to the 6 pos
+        break;
+    case 7: // put to the 7 pos
+        break;
+    case 8: // put to the 8 pos
+        break;
+    case 9: // put to the 9 pos
+        break;
+    case 10: // put to the 10 pos
+        break;
     default:
         break;
     }
