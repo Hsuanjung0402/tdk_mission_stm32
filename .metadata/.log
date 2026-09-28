@@ -1,0 +1,24 @@
+!SESSION 2026-07-30 10:27:44.511 -----------------------------------------------
+eclipse.buildId=Version 2.1.1
+java.version=21.0.9
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2026-07-30 10:27:55.123
+!MESSAGE Log4j2 initialized with config file /home/terry/stm32_ws/tdk_mission_stm32/.metadata/.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2026-07-30 10:27:56.947
+!MESSAGE Started RMI Server, listening on port 41337
+!SESSION 2026-07-30 10:28:31.016 -----------------------------------------------
+eclipse.buildId=Version 2.1.1
+java.version=21.0.9
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2026-07-30 10:30:51.801
+!MESSAGE Log4j2 initialized with config file /home/terry/stm32_ws/tdk_mission/tdk_mission_stm32/.metadata/.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2026-07-30 10:30:53.234
+!MESSAGE Started RMI Server, listening on port 41337

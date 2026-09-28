@@ -15,5 +15,4 @@
 #define USARTx huart3
 
 
-
 #endif /* INC_UROS_UROS_CONFIG_H_ */

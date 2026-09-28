@@ -21,6 +21,7 @@
 #include <std_msgs/msg/int32.h>
 #include <std_msgs/msg/bool.h>
 #include <robot_interfaces/msg/mechanism_command.h>
+#include <robot_interfaces/msg/straw_pick_status.h>
 
 #include "uros_config.h"
 #include "timers.h"
@@ -39,6 +40,20 @@ extern volatile bool      mechanism_command_pending;
 /* printf 目前經由 huart3 (與 micro-ROS transport 共用) 無法輸出，
  * 用這個計數器在除錯視窗 (Live Expressions) 確認 callback 是否真的被觸發 */
 extern volatile uint32_t  mechanism_command_rx_count;
+
+/* 第三關自動夾取：arm / disarm 在 mechanism_command_cb 直接處理，不經過 StartTask02 */
+#define STRAW_PICK_CMD_ARM     320
+#define STRAW_PICK_CMD_DISARM  321
+
+/* 自動夾取共享狀態（定義在 rtos_main.c）
+ * 寫入端：StartTask02（phase / pick_count）、StartTask03（switch_pressed / request）、
+ *         mechanism_command_cb（armed）
+ * 讀取端：straw_pick_status_timer_cb 在 micro-ROS task 裡讀取後 publish */
+extern volatile uint8_t straw_pick_phase;       /* robot_interfaces__msg__StrawPickStatus__PHASE_* */
+extern volatile uint8_t straw_pick_count;
+extern volatile bool    straw_pick_armed;
+extern volatile bool    straw_switch_pressed;   /* debounce 後的 PD1 狀態 */
+extern volatile bool    straw_pick_request;     /* Task03 偵測到有效按下邊緣，Task02 消化 */
 
 bool cubemx_transport_open(struct uxrCustomTransport * transport);
 bool cubemx_transport_close(struct uxrCustomTransport * transport);
@@ -72,6 +87,7 @@ void uros_create_entities(void);
 void uros_destroy_entities(void);
 
 void mechanism_command_cb(const void* msgin);
+void straw_pick_status_timer_cb(rcl_timer_t *timer, int64_t last_call_time);
 
 #ifdef __cplusplus
 }

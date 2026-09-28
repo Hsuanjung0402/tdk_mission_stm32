@@ -288,3 +288,4 @@ control_msgs/ExecuteMotionPrimitiveSequence.action
 control_msgs/JointTrajectory.action
 control_msgs/FollowJointWrenchTrajectory.action
 robot_interfaces/MechanismCommand.msg
+robot_interfaces/StrawPickStatus.msg
