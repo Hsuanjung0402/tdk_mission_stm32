@@ -131,10 +131,6 @@ void StartTask02(void *argument)
 			__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, (uint32_t)(500 + 6.67 * 142));
 			break;
 
-
-
-
-
 		case 999:
 			mechanism_command_id = 0;
 			__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, (uint32_t)(500 + 6.67 * target_angle_1));

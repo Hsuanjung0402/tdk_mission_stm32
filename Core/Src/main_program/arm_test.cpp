@@ -57,14 +57,17 @@ void homing()
     shoulder.reset();
     is_homing_done[1] = true;
 
-    elbow.homing_ccw(1800);
+    // elbow 沒 attach 時跳過：馬達不會動，等開關會永遠卡住
+    if (elbow.is_active) {
+        elbow.homing_ccw(1800);
 
-    while (!elbow_homing_switch.isPressed()) {
-        osDelay(1); 
+        while (!elbow_homing_switch.isPressed()) {
+            osDelay(1); 
+        }
+
+        // 撞到了！立刻重置馬達計數，這裡就是絕對 0 度
+        elbow.reset();
     }
-
-    // 撞到了！立刻重置馬達計數，這裡就是絕對 0 度
-    elbow.reset();
     is_homing_done[0] = true;
 
     Homing_arm = false;
