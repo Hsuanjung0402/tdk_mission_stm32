@@ -166,3 +166,19 @@ void ms_2::open_pink()
 {
     pink.set_angle(0);
 }
+
+void ms_2::cw_time(int time){
+    if( POS_ms2 == pos_ms2::down_cw )
+        return;
+    motor.cw();
+    osDelay(time);
+    motor.stop();
+}
+
+void ms_2::ccw_time(int time){
+    if( POS_ms2 == pos_ms2::down_ccw )
+        return;
+    motor.ccw();
+    osDelay(time);
+    motor.stop();
+}

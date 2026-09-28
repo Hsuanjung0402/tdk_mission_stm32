@@ -98,12 +98,26 @@ void Error_Handler(void);
 #define elbow_dir_GPIO_Port GPIOD
 #define pwm_210_Pin GPIO_PIN_12
 #define pwm_210_GPIO_Port GPIOD
+#define fork_pwm_Pin GPIO_PIN_13
+#define fork_pwm_GPIO_Port GPIOD
+#define fork_dir_Pin GPIO_PIN_15
+#define fork_dir_GPIO_Port GPIOD
 #define shoulder_homing_switch_Pin GPIO_PIN_3
 #define shoulder_homing_switch_GPIO_Port GPIOG
 #define elbow_homing_switch_Pin GPIO_PIN_4
 #define elbow_homing_switch_GPIO_Port GPIOG
+#define fork_encoder_1_Pin GPIO_PIN_6
+#define fork_encoder_1_GPIO_Port GPIOC
+#define fork_encoder_2_Pin GPIO_PIN_7
+#define fork_encoder_2_GPIO_Port GPIOC
 #define pwm_202_Pin GPIO_PIN_8
 #define pwm_202_GPIO_Port GPIOC
+#define Trigger_Pin GPIO_PIN_1
+#define Trigger_GPIO_Port GPIOD
+#define Trigger_EXTI_IRQn EXTI1_IRQn
+#define fork_lim_Pin GPIO_PIN_3
+#define fork_lim_GPIO_Port GPIOD
+#define fork_lim_EXTI_IRQn EXTI3_IRQn
 
 /* USER CODE BEGIN Private defines */
 

@@ -13,27 +13,45 @@
 #include "arm_test.hpp"
 #include "servo_motor_config.h"
 #include "ms_2_monitor.h"
+#include "fork.hpp"
 #include "cmsis_os2.h"
 #include <stdbool.h>
 
-int task_remain = 0, task02 = 0;
-volatile int angle = 47;
-volatile bool limsw = false;
-// osSemaphoreId_t limsw_sem;
-volatile bool Prepared = false;
+#define shoulder_homing_switch GPIO_PIN_3 
+#define elbow_homing_switch GPIO_PIN_4 
+#define take_hay_bale 99
 
-volatile int test_angle_1 = 90, test_angle_2 = 90;
+int task_remain = 0, task02 = 0, task03 = 0;
+volatile bool limsw = false;
+volatile bool Prepared = false;
+volatile bool shoulder_lim = false;
+volatile bool elbow_lim = false;
+volatile bool Homing_arm = false;
+volatile bool Homing_fork = false;
+volatile int arm_command = 0, fork_command = 0;
+volatile bool trigger = false;
+volatile bool fork_lim = false;
+volatile int Rotate_time = 0;
+volatile bool trigger_enable = true;
+volatile int counter = 0;
+volatile bool hay_bale_put = false;
+
+volatile int target_angle_1 = 248,target_angle_2 = 68;
 
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
+extern TIM_HandleTypeDef htim12;
+extern TIM_HandleTypeDef htim24;
+extern bool hay_bale_took;
 
 void StartDefaultTask(void *argument)
 {
 	HAL_TIM_Base_Start_IT(&htim2);
 	servo_init();
-	// cpp_arm_init();
-	uros_init();
+	cpp_arm_init(); 
+	cpp_fork_init();
+ 	uros_init();
 	for (;;)
 	{
 		uros_agent_status_check();
@@ -49,7 +67,7 @@ void StartTask02(void *argument)
 		// /mechanism/command 觸發的機構動作 (command_id 由 mechanism_command_cb 更新)
 		switch (mechanism_command_id)
 		{
-		case 2000:	// initialize and set motor mid
+		case 2000: // initialize and set motor mid
 			mechanism_command_id = 0;
 			MS_2_init();
 			break;
@@ -57,34 +75,30 @@ void StartTask02(void *argument)
 			mechanism_command_id = 0;
 			pusher_extend();
 			break;
-
 		case 2101: // pusher extend stage 1
 			mechanism_command_id = 0;
 			pusher_extend_1();
 			break;
-
 		case 2201: // pusher extend stage 2
 			mechanism_command_id = 0;
 			pusher_extend_2();
 			break;
-
 		case 2010: // pusher 升到最高點:
 			mechanism_command_id = 0;
-			__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, (uint32_t)(500 + 6.67 * 210));
+			__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, (uint32_t)(500 + 6.67 * 230));
 			break;
-
 		// navigation
 		case 202: // pusher extract
 			mechanism_command_id = 0;
 			pusher_retract();
 			break;
-		//navigation
+		// navigation
 		 case 2001:	// 翻回去
-		 	mechanism_command_id = 0;
-		 	MS_2_CCW_down();
-		 	break;
-		// navigationservo
-		case 203:	//  咬住 box
+			mechanism_command_id = 0;
+			MS_2_CCW_down();
+			break;
+		// navigation
+		case 203:	//  servo咬住 box
 			mechanism_command_id = 0;
 			MS_2_close_blue();
 			break;
@@ -92,71 +106,126 @@ void StartTask02(void *argument)
 			mechanism_command_id = 0;
 			MS_2_CW_rotate();
 			break;
-		 case 205:	// 翻回去
-		 	mechanism_command_id = 0;
-		 	MS_2_CCW_down();
-		 	break;
-		 // navigation
+		case 205:
+			mechanism_command_id = 0;
+			MS_2_CCW_down();
+			break;
+		// navigation
 		case 206: // servo 放開 box
 			mechanism_command_id = 0;
 			MS_2_open_blue();
 			break;
-
 		case 207: // 置中
 			mechanism_command_id = 0;
 			MS_2_middle();
 			break;
-
 		case 2011:	// push 從最高點放平
 			mechanism_command_id = 0;
-			__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, (uint32_t)(500 + 6.67 * 135));
+			__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, (uint32_t)(500 + 6.67 * 142));
 			break;
- 
+
+
+
+
+
+		case 999:
+			mechanism_command_id = 0;
+			__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, (uint32_t)(500 + 6.67 * target_angle_1));
+			__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, (uint32_t)(500 + 6.67 * target_angle_2));
+			break;
+
+
+		case 111:
+			mechanism_command_id = 0;
+			MS_2_CW_time(Rotate_time);
+			break;
+
+		case 112:
+			mechanism_command_id = 0;
+			MS_2_CCW_time(Rotate_time);
+			break;
+
+		case 1:// Test Light
+			mechanism_command_id = 0;	
+			HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_0);
+			osDelay(1000);
+			HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_0);
+			break;
+		case 6:
+			mechanism_command_id = 0;
+			MS_2_CCW_rotate();
+			break;
+		case 8:
+			mechanism_command_id = 0;
+			MS_2_close_pink();
+			break;
 		
-
-//		 case 10: // servo 放開 box 鏡像
-//				mechanism_command_id = 0;
-//				MS_2_open_pink();
-//				break;
-//		 case 4:
-//			mechanism_command_id = 0;
-//			MS_2_CCW_down();
-//			break;
-//		 case 6:
-//				 	mechanism_command_id = 0;
-//				 	MS_2_CCW_rotate();
-//				 	break;
-//		 case 8:	// servo 咬住 box 鏡像
-//		 	mechanism_command_id = 0;
-//		 	MS_2_close_pink();
-//		 	break;
-
-
-		// case YOUR_COMMAND_ID: // Mission 2 逆時針降下
-		// 	mechanism_command_id = 0;
-		// 	MS_2_CCW_down();
-		// 	break;
-
-
-		// case YOUR_COMMAND_ID: // 執行手臂動作腳本
-		// 	mechanism_command_id = 0;
-		// 	cpp_arm_test();
-		// 	break;
+		case 10:
+			mechanism_command_id = 0;
+			MS_2_open_pink();
+			break;
+		
+		case 16:
+			mechanism_command_id = 0;
+			HAL_TIM_PWM_Start( &htim12, TIM_CHANNEL_2);
+			HAL_TIM_Encoder_Start(&htim24, TIM_CHANNEL_ALL);
+    		__HAL_TIM_SET_COUNTER(&htim24, 0); 
+			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET); 
+			__HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_2, (uint32_t)(50));
+		case 10001:
+			mechanism_command_id = 0;
+			cpp_arm_homing();
+			break;
+		case 10002:
+			mechanism_command_id = 0;
+			cpp_arm_test();
+			break;
+		case 10003:
+			mechanism_command_id = 0;
+			cpp_arm_script(arm_command);
+			break;
+		case 20001:
+			mechanism_command_id = 0;
+			cpp_fork_homing();
+			break;
+		case 20003:
+			mechanism_command_id = 0;
+			cpp_fork_pos(fork_command);
+			break;
 
 		default:
 			break;
 		}
-
-		task_remain = uxTaskGetStackHighWaterMark(NULL);
+		if (trigger && trigger_enable)// need to test if trigger_enable needed or unuse
+		{
+			trigger_enable = false;
+			trigger = false;
+			counter++;
+			cpp_arm_script(take_hay_bale);
+			while(!hay_bale_took){
+				osDelay(1);
+			}
+			cpp_arm_script(counter);
+			while(!hay_bale_put){
+				if( counter >= 4 ){
+					cpp_fork_pos(2);
+				}
+			}
+			trigger_enable = true;
+		}
 		osDelay(1);
 	}
 }
 
-void StartTask03(void *argument){
-	for(;;){
-		cpp_arm_update();
-		osDelay(10);
-	}
+void StartTask03(void *argument)
+{
+		for (;;)
+		{
+			task03++;
+			if(!Homing_arm && !Homing_fork)cpp_arm_update();
+			task_remain = uxTaskGetStackHighWaterMark(NULL);
+			osDelay(1);
+		}
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
@@ -166,7 +235,42 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		limsw = true;
 	}
 
-	if (HAL_GPIO_ReadPin(GPIOG, GPIO_Pin) == GPIO_PIN_SET)
+	if (HAL_GPIO_ReadPin(GPIOD, GPIO_Pin) == GPIO_PIN_SET)
 	{
+		if (GPIO_Pin == GPIO_PIN_3)
+		{
+			fork_lim = true;
+		}
+		else
+		{
+			trigger = true;
+		}
 	}
+	// if (HAL_GPIO_ReadPin(GPIOD, GPIO_Pin) == GPIO_PIN_SET)
+	// {
+	// 	if (GPIO_Pin == GPIO_PIN_1)
+	// 	{
+	// 		uint32_t trigger_current_time = HAL_GetTick();
+	// 		uint32_t trigger_last_time;
+	// 		if (trigger_current_time - trigger_last_time >= 2000)
+	// 		{
+	// 			trigger++;
+	// 		}
+	// 		trigger_last_time = trigger_current_time;
+	// 	}
+	// }
+
+	// uint32_t trigger_current_time = HAL_GetTick();
+	// if (GPIO_Pin == GPIO_PIN_1)
+	// {
+	// 	if (HAL_GPIO_ReadPin(GPIOD, GPIO_Pin) == GPIO_PIN_SET)
+	// 	{
+	// 		uint32_t trigger_last_time;
+	// 		if (trigger_current_time - trigger_last_time >= 2000)
+	// 		{
+	// 			trigger++;
+	// 		}
+	// 		trigger_last_time = trigger_current_time;
+	// 	}
+	// }
 }

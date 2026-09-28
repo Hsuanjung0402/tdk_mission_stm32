@@ -98,13 +98,34 @@ void Encoder::update(float dt_seconds) {
 
 
     // --- 輸出控制邏輯 ---
-    int32_t error = target_counts - current_count;
-    float p_gain = 2.0f; // 比例控制增益
-    float power = static_cast<float>(error) * p_gain;
+    // int32_t error = target_counts - current_count;
+    // float p_gain = 1.0f; // 比例控制增益
+    // float power = static_cast<float>(error) * p_gain;
 
-    float max_pwm_limit = 3199.0f; 
+    float power = pid_controller.compute(target_counts, current_count, dt_seconds);
+
+    float max_pwm_limit = 10000.0f;//2000 
+    float min_pwm_limit = 0.05f * max_pwm_limit;
+
     if(power > max_pwm_limit) power = max_pwm_limit;
     else if(power < -max_pwm_limit) power = -max_pwm_limit;
+
+    if (abs(target_counts - current_count) <= 10)
+    {
+        power = 0;
+        pid_controller.reset();
+    }
+    else
+    {
+        if (power > 0 && power < min_pwm_limit)
+        {
+            power = min_pwm_limit;
+        }
+        else if (power < 0 && power > -min_pwm_limit)
+        {
+            power = -min_pwm_limit;
+        }
+    }
 
     if (power > 0) {
         HAL_GPIO_WritePin(dir_port, dir_pin1, GPIO_PIN_SET); 
@@ -127,6 +148,31 @@ void Encoder::reset() {
     target_rpm = 0.0f;
     pid_controller.reset();
 
+}
+
+void Encoder::homing_cw()
+{
+    HAL_GPIO_WritePin(dir_port, dir_pin1, GPIO_PIN_SET);
+    __HAL_TIM_SET_COMPARE(pwm_htim, pwm_channel, HOMING_SPEED);
+}
+
+void Encoder::homing_ccw()
+{
+    HAL_GPIO_WritePin(dir_port, dir_pin1, GPIO_PIN_RESET);
+    __HAL_TIM_SET_COMPARE(pwm_htim, pwm_channel, HOMING_SPEED);
+}
+
+
+void Encoder::homing_cw(int speed)
+{
+    HAL_GPIO_WritePin(dir_port, dir_pin1, GPIO_PIN_SET);
+    __HAL_TIM_SET_COMPARE(pwm_htim, pwm_channel, speed);
+}
+
+void Encoder::homing_ccw(int speed)
+{
+    HAL_GPIO_WritePin(dir_port, dir_pin1, GPIO_PIN_RESET);
+    __HAL_TIM_SET_COMPARE(pwm_htim, pwm_channel, speed);
 }
 void Encoder::setTargetAngleAfter(uint32_t delay_ms, float target_angle, uint32_t duration_ms) {
     current_state = EncoderState::WAITING;

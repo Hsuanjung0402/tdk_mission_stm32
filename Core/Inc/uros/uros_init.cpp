@@ -3,7 +3,7 @@
  *
  *  Created on: Jul 15, 2026
  *      Author: hsuanjung
- *
+ * 
  *  主要修正：
  *  1. MechanismCommand 內含兩個 unbounded string，必須「預先配置」緩衝區，
  *     否則 cdr_deserialize 會因 capacity 不足直接回傳 false，
@@ -152,7 +152,7 @@ void handle_state_agent_connected(void) {
     }
     ping_fail_count = 0;
   }
-
+  
 
   rclc_executor_spin_some(&executor, RCL_MS_TO_NS(10));
 }
@@ -245,3 +245,4 @@ void mechanism_command_cb(const void *msgin) {
   mechanism_command_id = msg->command_id;
   mechanism_command_pending = true;
 }
+

@@ -38,6 +38,8 @@ extern "C"{
         void close_pink();
         void close_blue();
 
+        void cw_time(int);
+        void ccw_time(int);
     private:
         dc_driver motor;
         servo pink;

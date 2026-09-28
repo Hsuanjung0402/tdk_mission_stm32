@@ -28,12 +28,16 @@ void Servo::attach(TIM_HandleTypeDef* timer, uint32_t ch, float per_degree, uint
     target_angle = 0.0f;
     step_unit = 0.0f;
     is_active = true; // 標記為啟用
-    __HAL_TIM_SET_COMPARE(htim, channel, pulse_offset); // 預設歸零
+    // __HAL_TIM_SET_COMPARE(htim, channel, pulse_offset); // 預設歸零
 
     if (registered_count < MAX_SERVOS) {
         servo_pool[registered_count] = this; // 將自己的指標 (this) 存進陣列
         registered_count++;
     }
+}
+
+void Servo::set_current_angle(float deg){
+    current_angle = deg;
 }
 
 // 設定目標角度與運作時間，計算每次更新的步進量

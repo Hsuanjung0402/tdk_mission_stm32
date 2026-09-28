@@ -23,6 +23,8 @@ void MS_2_open_blue();
 void MS_2_middle();
 void MS_2_close_pink();
 void MS_2_close_blue();
+void MS_2_CW_time(int);
+void MS_2_CCW_time(int);
 
 #ifdef __cplusplus
 }

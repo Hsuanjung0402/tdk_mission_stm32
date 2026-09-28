@@ -1,2 +1,5 @@
-Debug/
-Release/
+/build/
+/cmake-build-debug/
+/.settings/
+/.vscode/
+/Debug/
