@@ -8,6 +8,7 @@
 
 
 #include "stm32h7xx_hal.h"
+#include "main.h"
 #include "uros_init.h"
 #include "servo_monitor.hpp"
 #include "arm_test.hpp"
@@ -20,6 +21,7 @@
 #define shoulder_homing_switch GPIO_PIN_3 
 #define elbow_homing_switch GPIO_PIN_4 
 #define take_hay_bale 99
+#define STRAW_SWITCH_DEBOUNCE_MS 25U
 
 int task_remain = 0, task02 = 0, task03 = 0;
 volatile bool limsw = false;
@@ -29,12 +31,17 @@ volatile bool elbow_lim = false;
 volatile bool Homing_arm = false;
 volatile bool Homing_fork = false;
 volatile int arm_command = 0, fork_command = 0;
-volatile bool trigger = false;
 volatile bool fork_lim = false;
 volatile int Rotate_time = 0;
-volatile bool trigger_enable = true;
 volatile int counter = 0;
 volatile bool hay_bale_put = false;
+
+/* 第三關自動夾取（宣告與說明見 uros_init.h） */
+volatile uint8_t straw_pick_phase = robot_interfaces__msg__StrawPickStatus__PHASE_IDLE;
+volatile uint8_t straw_pick_count = 0;
+volatile bool    straw_pick_armed = false;
+volatile bool    straw_switch_pressed = false;
+volatile bool    straw_pick_request = false;
 
 volatile int target_angle_1 = 248,target_angle_2 = 68;
 
@@ -196,10 +203,16 @@ void StartTask02(void *argument)
 		default:
 			break;
 		}
-		if (trigger && trigger_enable)// need to test if trigger_enable needed or unuse
+		if (straw_pick_request)
 		{
-			trigger_enable = false;
-			trigger = false;
+			straw_pick_request = false;
+			/* request 之後才 disarm 的話，這裡要再擋一次 */
+			if (!straw_pick_armed || straw_pick_phase != robot_interfaces__msg__StrawPickStatus__PHASE_IDLE)
+			{
+				osDelay(1);
+				continue;
+			}
+			straw_pick_phase = robot_interfaces__msg__StrawPickStatus__PHASE_PICKING;
 			counter++;
 			cpp_arm_script(take_hay_bale);
 			while(!hay_bale_took){
@@ -211,9 +224,41 @@ void StartTask02(void *argument)
 					cpp_fork_pos(2);
 				}
 			}
-			trigger_enable = true;
+			taskENTER_CRITICAL();
+			straw_pick_count++;
+			straw_pick_phase = robot_interfaces__msg__StrawPickStatus__PHASE_IDLE;
+			taskEXIT_CRITICAL();
 		}
 		osDelay(1);
+	}
+}
+
+/* PD1 前方極限開關：每 1 ms 在 StartTask03 輪詢，電位穩定 STRAW_SWITCH_DEBOUNCE_MS 才採用。
+ * 只在「debounce 後的按下邊緣」且 armed、phase == IDLE 時送出 request，
+ * 所以持續壓著不會重複觸發，必須先放開再按才會再觸發。 */
+static void straw_switch_poll(void)
+{
+	static bool raw_last = false;
+	static bool stable = false;
+	static uint32_t raw_change_tick = 0;
+
+	bool raw = (HAL_GPIO_ReadPin(Trigger_GPIO_Port, Trigger_Pin) == GPIO_PIN_SET);
+	uint32_t now = HAL_GetTick();
+
+	if (raw != raw_last)
+	{
+		raw_last = raw;
+		raw_change_tick = now;
+	}
+	else if (raw != stable && (uint32_t)(now - raw_change_tick) >= STRAW_SWITCH_DEBOUNCE_MS)
+	{
+		stable = raw;
+		straw_switch_pressed = stable;
+		if (stable && straw_pick_armed
+			&& straw_pick_phase == robot_interfaces__msg__StrawPickStatus__PHASE_IDLE)
+		{
+			straw_pick_request = true;
+		}
 	}
 }
 
@@ -222,6 +267,7 @@ void StartTask03(void *argument)
 		for (;;)
 		{
 			task03++;
+			straw_switch_poll();
 			if(!Homing_arm && !Homing_fork)cpp_arm_update();
 			task_remain = uxTaskGetStackHighWaterMark(NULL);
 			osDelay(1);
@@ -237,13 +283,10 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 	if (HAL_GPIO_ReadPin(GPIOD, GPIO_Pin) == GPIO_PIN_SET)
 	{
+		/* PD1 (Trigger) 改由 StartTask03 輪詢 + debounce，這裡不再處理 */
 		if (GPIO_Pin == GPIO_PIN_3)
 		{
 			fork_lim = true;
-		}
-		else
-		{
-			trigger = true;
 		}
 	}
 	// if (HAL_GPIO_ReadPin(GPIOD, GPIO_Pin) == GPIO_PIN_SET)

@@ -181,7 +181,7 @@ void Encoder::setTargetAngleAfter(uint32_t delay_ms, float target_angle, uint32_
     stored_duration_ms = duration_ms;
     stored_delay_ms = delay_ms;
 
-    target_counts = static_cast<int32_t>((target_angle / 360.0f) * ppr);
+    //target_counts = static_cast<int32_t>((target_angle / 360.0f) * ppr);
     
 }
 void Encoder::updateAll(float dt_seconds) {
