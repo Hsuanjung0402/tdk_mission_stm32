@@ -32,7 +32,7 @@ volatile bool Homing_arm = false;
 volatile bool Homing_fork = false;
 volatile int arm_command = 0, fork_command = 0;
 volatile bool fork_lim = false;
-volatile int Rotate_time = 0;
+volatile int Rotate_time = 0; // 1800: can drop
 volatile int counter = 0;
 volatile bool hay_bale_put = false;
 
@@ -122,6 +122,37 @@ void StartTask02(void *argument)
 			mechanism_command_id = 0;
 			MS_2_open_blue();
 			break;
+
+
+
+
+		// mirror map: plus 20 to each mechanism_command_id
+		// navigation
+		 case 2021:	// 翻回去
+			mechanism_command_id = 0;
+			MS_2_CW_down();
+			break;
+		// navigation
+		case 223:	//  servo咬住 box
+			mechanism_command_id = 0;
+			MS_2_close_pink();
+			break;
+		case 224:	// counterclock rotate
+			mechanism_command_id = 0;
+			MS_2_CCW_rotate();
+			break;
+		case 225:
+			mechanism_command_id = 0;
+			MS_2_CW_down();
+			break;
+		// navigation
+		case 226: // servo 放開 box
+			mechanism_command_id = 0;
+			MS_2_open_pink();
+			break;
+
+
+
 		case 207: // 置中
 			mechanism_command_id = 0;
 			MS_2_middle();
@@ -131,13 +162,9 @@ void StartTask02(void *argument)
 			__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, (uint32_t)(500 + 6.67 * 142));
 			break;
 
-		case 999:
-			mechanism_command_id = 0;
-			__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, (uint32_t)(500 + 6.67 * target_angle_1));
-			__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, (uint32_t)(500 + 6.67 * target_angle_2));
-			break;
 
 
+		// Test area Start:
 		case 111:
 			mechanism_command_id = 0;
 			MS_2_CW_time(Rotate_time);
@@ -154,28 +181,7 @@ void StartTask02(void *argument)
 			osDelay(1000);
 			HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_0);
 			break;
-		case 6:
-			mechanism_command_id = 0;
-			MS_2_CCW_rotate();
-			break;
-		case 8:
-			mechanism_command_id = 0;
-			MS_2_close_pink();
-			break;
 		
-		case 10:
-			mechanism_command_id = 0;
-			MS_2_open_pink();
-			break;
-		
-		case 16:
-			mechanism_command_id = 0;
-			HAL_TIM_PWM_Start( &htim12, TIM_CHANNEL_2);
-			HAL_TIM_Encoder_Start(&htim24, TIM_CHANNEL_ALL);
-    		__HAL_TIM_SET_COUNTER(&htim24, 0); 
-			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET); 
-			__HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_2, (uint32_t)(50));
-			break; 
 		case 10001:
 			mechanism_command_id = 0;
 			cpp_arm_homing();
@@ -197,9 +203,19 @@ void StartTask02(void *argument)
 			cpp_fork_pos(fork_command);
 			break;
 
+		case 999:
+			mechanism_command_id = 0;
+			// init_all();
+			break;
+
 		default:
 			break;
 		}
+
+		// Test area End:
+
+
+
 		if (straw_pick_request)
 		{
 			straw_pick_request = false;

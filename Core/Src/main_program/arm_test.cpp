@@ -33,7 +33,7 @@ int arm_init(void)
     servo_rotate.attach(&htim5, TIM_CHANNEL_2, 6.6667f, 800);
     servo_claw.attach(&htim5, TIM_CHANNEL_3, 6.6667f, 900);
     servo_wrist.attach(&htim5, TIM_CHANNEL_4, 7.3f, 500);
-    // elbow.attach(&htim23, 26400.0f, &htim12, TIM_CHANNEL_1, GPIOD, GPIO_PIN_11);
+    elbow.attach(&htim23, 26400.0f, &htim12, TIM_CHANNEL_1, GPIOD, GPIO_PIN_11);
     shoulder.attach(&htim24, 12720.0f, &htim12, TIM_CHANNEL_2, GPIOD, GPIO_PIN_10);
 
     arm_init_servo();
