@@ -265,11 +265,12 @@ void arm_script(int Command){
         shoulder.setTargetAngleAfter(0, 80, 2000);
 
         servo_base.setTargetAfter(2500, 214, 3000);
+        servo_rotate.setTargetAfter(2500, 130, 3000);
 
-        osDelay(5500);
+        osDelay(7000);
 
-        elbow.setTargetAngleAfter(0, 123, 3000);
-        shoulder.setTargetAngleAfter(0, 120, 3000);
+        elbow.setTargetAngleAfter(0, 126, 3000);
+        shoulder.setTargetAngleAfter(0, 124, 3000);
 
         servo_claw.setTargetAfter(3000, 85, 500);
         
