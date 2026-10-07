@@ -10,10 +10,10 @@
 #include "ms_2_monitor.h"
 #include "ms_2_config.h"
 
-extern TIM_HandleTypeDef htim3;
-extern TIM_HandleTypeDef htim4;
+extern TIM_HandleTypeDef htim13;
+extern TIM_HandleTypeDef htim15;
 
-ms_2 MS_2(GPIOA, GPIO_PIN_4, &htim4, TIM_CHANNEL_1, 10, Speed_210, &htim3, TIM_CHANNEL_3, 90, 90, 175, 7.4, 500, 2500, &htim3, TIM_CHANNEL_4, 183, 183, 98, 7.4, 500, 2500);
+ms_2 MS_2(GPIOG, GPIO_PIN_4, &htim13, TIM_CHANNEL_1, 10, Speed_210, &htim15, TIM_CHANNEL_2, 90, 90, 175, 7.4, 500, 2500, &htim15, TIM_CHANNEL_1, 191.9, 191.9, 110.1, 7.4, 500, 2500);
 
 extern "C" {
 

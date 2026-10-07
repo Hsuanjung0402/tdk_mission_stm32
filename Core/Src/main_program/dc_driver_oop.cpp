@@ -22,7 +22,7 @@ void dc_driver::stop(){
 }
 
 bool dc_driver::cw(){
-    HAL_GPIO_WritePin( _dir_gpio, _dir_pin , GPIO_PIN_SET);
+    HAL_GPIO_WritePin( _dir_gpio, _dir_pin , GPIO_PIN_RESET);
     _current_pwm = __HAL_TIM_GET_COMPARE(_pwm, _channel);
     _target_pwm = _speed;
 
@@ -39,7 +39,7 @@ bool dc_driver::cw(){
 }
 
 bool dc_driver::ccw(){
-    HAL_GPIO_WritePin( _dir_gpio, _dir_pin , GPIO_PIN_RESET);
+    HAL_GPIO_WritePin( _dir_gpio, _dir_pin , GPIO_PIN_SET);
     _current_pwm = __HAL_TIM_GET_COMPARE(_pwm, _channel);
     _target_pwm = _speed;
 

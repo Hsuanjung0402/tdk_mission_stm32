@@ -14,7 +14,7 @@
 #include "ms_2.hpp"
 #include "cmsis_os2.h"
 
-extern TIM_HandleTypeDef htim3;
+extern TIM_HandleTypeDef htim12;
 extern volatile bool limsw;
 extern dc_driver screen;
 
@@ -22,8 +22,8 @@ volatile uint8_t mission_delay_time = 100;
 volatile int target_speed = 400;
 
 //                pwm      channel     prepare_angle   initial_angle   target_angle   period   per   min_pwm   max_pwm
-servo servo_2_1(&htim3, TIM_CHANNEL_1,    247.5,         247.5,           165,        1000,    6.67,   500,     2500);
-servo servo_2_2(&htim3, TIM_CHANNEL_2,    67.5,           67.5,            150,        1000,    6.67,   500,     2500);
+servo servo_2_1(&htim12, TIM_CHANNEL_1,    247.5,         247.5,           165,        1000,    6.67,   500,     2500);
+servo servo_2_2(&htim12, TIM_CHANNEL_2,    67.5,           67.5,            150,        1000,    6.67,   500,     2500);
 
 void servo_init(){
     servo_2_1.initial_servo();
@@ -35,8 +35,8 @@ void pusher_extend_1(){
 }
 
 void pusher_extend_2(){
-    __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, ( 1100 ));
-    __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, ( 1360 ));
+    __HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_1, ( 1100 ));
+    __HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_2, ( 1360 ));
 }
 
 void pusher_extend(){
@@ -46,7 +46,7 @@ void pusher_extend(){
 }
 
 void pusher_retract(){
-    __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, ( 500 + 6.67 * 170 ));
+    __HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_1, ( 500 + 6.67 * 170 ));
     osDelay(100);
     servo::set_angle_sync(servo_2_1, servo_2_2, 0);
 }

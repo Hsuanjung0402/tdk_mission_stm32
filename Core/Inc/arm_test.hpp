@@ -11,6 +11,7 @@
 // 一般 C 函數宣告
 int arm_init(void);
 void arm_homing(void);
+void arm_mission_homing(void);
 void arm_init_servo(void);
 int arm_test(void);
 void arm_script(int);
@@ -23,6 +24,7 @@ extern "C" {
 void cpp_arm_init(void);
 void cpp_arm_init_servo(void);
 void cpp_arm_homing(void);
+void cpp_arm_mission_homing(void);
 void cpp_arm_test(void);
 void cpp_arm_update(void);
 void cpp_arm_script(int);

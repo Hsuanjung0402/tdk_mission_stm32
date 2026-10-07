@@ -7,6 +7,7 @@
 
 
 
+#include <init.hpp>
 #include "stm32h7xx_hal.h"
 #include "main.h"
 #include "uros_init.h"
@@ -28,13 +29,14 @@ volatile bool limsw = false;
 volatile bool Prepared = false;
 volatile bool shoulder_lim = false;
 volatile bool elbow_lim = false;
-volatile bool Homing_arm = false;
-volatile bool Homing_fork = false;
+volatile bool Homing_arm = true;
+volatile bool Homing_fork = true;// caution!
 volatile int arm_command = 0, fork_command = 0;
 volatile bool fork_lim = false;
 volatile int Rotate_time = 0; // 1800: can drop
 volatile int counter = 0;
 volatile bool hay_bale_put = false;
+volatile bool pd11 = false;
 
 /* 第三關自動夾取（宣告與說明見 uros_init.h） */
 volatile uint8_t straw_pick_phase = robot_interfaces__msg__StrawPickStatus__PHASE_IDLE;
@@ -45,10 +47,14 @@ volatile bool    straw_pick_request = false;
 
 volatile int target_angle_1 = 248,target_angle_2 = 68;
 
+extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
+extern TIM_HandleTypeDef htim8;
 extern TIM_HandleTypeDef htim12;
+extern TIM_HandleTypeDef htim13;
+extern TIM_HandleTypeDef htim23;
 extern TIM_HandleTypeDef htim24;
 extern bool hay_bale_took;
 
@@ -56,9 +62,13 @@ void StartDefaultTask(void *argument)
 {
 	HAL_TIM_Base_Start_IT(&htim2);
 	servo_init();
-	cpp_arm_init(); 
+	cpp_arm_init();
 	cpp_fork_init();
- 	uros_init();
+	HAL_TIM_PWM_Start(&htim24, TIM_CHANNEL_1);
+	HAL_TIM_PWM_Start(&htim24, TIM_CHANNEL_2);
+	HAL_TIM_PWM_Start(&htim24, TIM_CHANNEL_3);
+	HAL_TIM_PWM_Start(&htim24, TIM_CHANNEL_4);
+	uros_init();
 	for (;;)
 	{
 		uros_agent_status_check();
@@ -92,7 +102,7 @@ void StartTask02(void *argument)
 			break;
 		case 2010: // pusher 升到最高點:
 			mechanism_command_id = 0;
-			__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, (uint32_t)(500 + 6.67 * 230));
+			__HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_2, (uint32_t)(500 + 6.67 * 230));
 			break;
 		// navigation
 		case 202: // pusher extract
@@ -159,7 +169,7 @@ void StartTask02(void *argument)
 			break;
 		case 2011:	// push 從最高點放平
 			mechanism_command_id = 0;
-			__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, (uint32_t)(500 + 6.67 * 142));
+			__HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_2, (uint32_t)(500 + 6.67 * 142));
 			break;
 
 
@@ -194,6 +204,10 @@ void StartTask02(void *argument)
 			mechanism_command_id = 0;
 			cpp_arm_script(arm_command);
 			break;
+		case 10004:
+			mechanism_command_id = 0;
+			cpp_arm_mission_homing();
+			break;
 		case 20001:
 			mechanism_command_id = 0;
 			cpp_fork_homing();
@@ -203,9 +217,19 @@ void StartTask02(void *argument)
 			cpp_fork_pos(fork_command);
 			break;
 
-		case 999:
+		case 9990:
 			mechanism_command_id = 0;
-			// init_all();
+			init_all();
+			break;
+
+		case 9991:
+			mechanism_command_id = 0;
+			init_ms_2();
+			break;
+
+		case 9992:
+			mechanism_command_id = 0;
+			init_ms_3();
 			break;
 
 		default:
@@ -227,12 +251,14 @@ void StartTask02(void *argument)
 			}
 			straw_pick_phase = robot_interfaces__msg__StrawPickStatus__PHASE_PICKING;
 			counter++;
+			if( counter == 1 )cpp_fork_pos(1);
 			cpp_arm_script(take_hay_bale);
 			while(!hay_bale_took){
 				osDelay(1);
 			}
 			cpp_arm_script(counter);
 			while(!hay_bale_put){
+				cpp_arm_script(99);
 				if( counter >= 4 ){
 					cpp_fork_pos(2);
 				}
@@ -249,13 +275,16 @@ void StartTask02(void *argument)
 /* PD1 前方極限開關：每 1 ms 在 StartTask03 輪詢，電位穩定 STRAW_SWITCH_DEBOUNCE_MS 才採用。
  * 只在「debounce 後的按下邊緣」且 armed、phase == IDLE 時送出 request，
  * 所以持續壓著不會重複觸發，必須先放開再按才會再觸發。 */
+
+bool raw;
+
 static void straw_switch_poll(void)
 {
 	static bool raw_last = false;
 	static bool stable = false;
 	static uint32_t raw_change_tick = 0;
 
-	bool raw = (HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_1) == GPIO_PIN_SET);
+	raw = (HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_11) == GPIO_PIN_SET);
 	uint32_t now = HAL_GetTick();
 
 	if (raw != raw_last)
@@ -281,7 +310,7 @@ void StartTask03(void *argument)
 		{
 			task03++;
 			straw_switch_poll();
-			if(!Homing_arm && !Homing_fork)cpp_arm_update();
+			if(!Homing_arm && !Homing_fork)cpp_arm_update();// caution! initial value for Homing_fork is false
 			task_remain = uxTaskGetStackHighWaterMark(NULL);
 			osDelay(1);
 		}
@@ -296,37 +325,16 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 	if (HAL_GPIO_ReadPin(GPIOD, GPIO_Pin) == GPIO_PIN_SET)
 	{
-		/* PD1 (Trigger) 改由 StartTask03 輪詢 + debounce，這裡不再處理 */
-		if (GPIO_Pin == GPIO_PIN_3)
+		switch (GPIO_Pin)
 		{
+		case GPIO_PIN_15:
 			fork_lim = true;
+			break;
+		case GPIO_PIN_11:
+			pd11  = true;
+			break;
+		default:
+			break;
 		}
 	}
-	// if (HAL_GPIO_ReadPin(GPIOD, GPIO_Pin) == GPIO_PIN_SET)
-	// {
-	// 	if (GPIO_Pin == GPIO_PIN_1)
-	// 	{
-	// 		uint32_t trigger_current_time = HAL_GetTick();
-	// 		uint32_t trigger_last_time;
-	// 		if (trigger_current_time - trigger_last_time >= 2000)
-	// 		{
-	// 			trigger++;
-	// 		}
-	// 		trigger_last_time = trigger_current_time;
-	// 	}
-	// }
-
-	// uint32_t trigger_current_time = HAL_GetTick();
-	// if (GPIO_Pin == GPIO_PIN_1)
-	// {
-	// 	if (HAL_GPIO_ReadPin(GPIOD, GPIO_Pin) == GPIO_PIN_SET)
-	// 	{
-	// 		uint32_t trigger_last_time;
-	// 		if (trigger_current_time - trigger_last_time >= 2000)
-	// 		{
-	// 			trigger++;
-	// 		}
-	// 		trigger_last_time = trigger_current_time;
-	// 	}
-	// }
 }
