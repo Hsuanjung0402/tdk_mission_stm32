@@ -35,9 +35,8 @@ void fork_homing(){
     Homing_fork = false;
 }
 
-void fork_pos(int Fork_command){ // DO NOT ROTATE OVER 260 DEGREES !!!
+void fork_pos(int Fork_command){
     // MAX SPEED: 36 DEGREES / 1000 M SEC = .0036
-    // fork_motor.reset();
     switch (Fork_command)
     {
     case 1: // For level 1
@@ -51,10 +50,6 @@ void fork_pos(int Fork_command){ // DO NOT ROTATE OVER 260 DEGREES !!!
     default:
         break;
     }
-    // HAL_TIM_Encoder_Start(&htim8, TIM_CHANNEL_ALL);
-    // HAL_GPIO_WritePin( GPIOD, GPIO_PIN_15, GPIO_PIN_RESET);
-    // HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
-    // __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_2, 5000);
 }
 
 extern "C"{

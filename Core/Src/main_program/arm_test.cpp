@@ -13,7 +13,7 @@ volatile float test_i = 0.0f;
 volatile bool hay_bale_took = false;
 Servo servo_base, servo_rotate, servo_claw, servo_wrist;
 Encoder elbow(3.0f, 0.3f, 0.0f, 3199.0f),
-        shoulder(3.0f, 0.3f, 0.0f, 3199.0f);
+        shoulder(3.0f, 0.5f, 0.0f, 3199.0f);
 LimitSwitch elbow_homing_switch(GPIOD, GPIO_PIN_14); // 歸零用的微動開關
 LimitSwitch shoulder_homing_switch(GPIOD, GPIO_PIN_10); // 歸零用的微動開關
 
@@ -59,7 +59,7 @@ void homing()
     is_homing_done[0] = false; //reset elbow homing status
     is_homing_done[1] = false; //reset shoulder homing status
 
-    osDelay(1000);
+    // osDelay(1000);
 
     shoulder.homing_ccw(1000);
     // // 持續檢查，直到開關被穩穩按下
@@ -71,7 +71,7 @@ void homing()
 
     // elbow 沒 attach 時跳過：馬達不會動，等開關會永遠卡住
     if (elbow.is_active) {
-        elbow.homing_ccw(1000);
+        elbow.homing_ccw(1500);
 
         while (!elbow_homing_switch.isPressed()) {
             osDelay(1); 
@@ -102,9 +102,9 @@ void arm_homing(void){
 }
 
 void arm_mission_homing(void){
-    servo_base.setTargetAfter(0, 100, 3000);
+    servo_base.setTargetAfter(0, 100, 200);
 
-    osDelay(3000);
+    osDelay(200);
 
     homing();    
 
@@ -157,7 +157,7 @@ look from the robot center
 
 void arm_script(int Command){
     /*
-        shoulder motor max speed    :     deg/s
+        shoulder motor max speed    :    36 deg/s
         elbow motor max speed       :    60 deg/s
     */
     switch (Command)
@@ -181,28 +181,30 @@ void arm_script(int Command){
         
         servo_claw.setTargetAfter(0, 40, 200);
 
-        osDelay(1000);
+        osDelay(200);
 
-        shoulder.setTargetAngleAfter(0, 183, 1000);
-        servo_rotate.setTargetAfter(0, 95, 1000);
+        shoulder.setTargetAngleAfter(0, 183, 300);
+        servo_rotate.setTargetAfter(0, 95, 300);
 
-        osDelay(2500);
+        osDelay(3000);
 
-        servo_claw.setTargetAfter(0, 96, 1000);
+        servo_claw.setTargetAfter(0, 96, 300);
 
-        osDelay(1000);
+        osDelay(300);
 
         hay_bale_took = true;
         break;
 
     case 11: // from fork to hay bale pos
-        shoulder.setTargetAngleAfter(0, 90, 2000);
-        elbow.setTargetAngleAfter(0, 100, 2000);
-        servo_claw.setTargetAfter(0, 70, 2000);
-        servo_rotate.setTargetAfter(0, 110,2000);
-        servo_base.setTargetAfter(2000, 12, 2000);
+        shoulder.setTargetAngleAfter(0, 90, 500);
+        elbow.setTargetAngleAfter(0, 100, 500);
+        servo_claw.setTargetAfter(0, 70, 500);
+        servo_rotate.setTargetAfter(0, 110,500);
+        servo_wrist.setTargetAfter(0, 5, 500);
+        servo_base.setTargetAfter(2000, 12, 500);
+        
 
-        osDelay(4000);
+        osDelay(2500);
 
         shoulder.setTargetAngleAfter(0, 25, 500);
         elbow.setTargetAngleAfter(0, 15, 500);
@@ -215,16 +217,19 @@ void arm_script(int Command){
     case 1: // put to the 1 pos
         shoulder.setTargetAngleAfter(0, 80, 2000);
 
-        servo_base.setTargetAfter(2500, 162, 3000);
+        osDelay(1300);
 
-        osDelay(5500);
-
-        elbow.setTargetAngleAfter(0, 123, 3000);
-        shoulder.setTargetAngleAfter(0, 120, 3000);
-
-        servo_claw.setTargetAfter(3000, 85, 500);
+        servo_base.setTargetAfter(2500, 162, 1000);
+        servo_rotate.setTargetAfter(2500, 120, 1000);
 
         osDelay(3500);
+
+        elbow.setTargetAngleAfter(0, 115, 500);
+        shoulder.setTargetAngleAfter(0, 130, 500);
+
+        servo_claw.setTargetAfter(700, 85, 500);
+
+        osDelay(1000);
 
         hay_bale_put = true;
         break;
@@ -232,55 +237,101 @@ void arm_script(int Command){
     case 2: // put to the 2 pos
         shoulder.setTargetAngleAfter(0, 80, 2000);
 
-        servo_base.setTargetAfter(2500, 180, 3000);
+        osDelay(1300);
 
-        osDelay(5500);
-
-        elbow.setTargetAngleAfter(0, 123, 3000);
-        shoulder.setTargetAngleAfter(0, 120, 3000);
-
-        servo_claw.setTargetAfter(3000, 85, 500);
+        servo_base.setTargetAfter(2500, 180, 1000);
 
         osDelay(3500);
+
+        elbow.setTargetAngleAfter(0, 123, 500);
+        shoulder.setTargetAngleAfter(0, 120, 500);
+
+        servo_claw.setTargetAfter(700, 85, 500);
+
+        osDelay(1000);
 
         hay_bale_put = true;
         break;
     case 3: // put to the 3 pos
         shoulder.setTargetAngleAfter(0, 80, 2000);
 
-        servo_base.setTargetAfter(2500, 198, 3000);
+        osDelay(1300);
 
-        osDelay(5500);
-
-        elbow.setTargetAngleAfter(0, 123, 3000);
-        shoulder.setTargetAngleAfter(0, 120, 3000);
-
-        servo_claw.setTargetAfter(3000, 85, 500);
+        servo_base.setTargetAfter(2500, 198, 1000);
 
         osDelay(3500);
+
+        elbow.setTargetAngleAfter(0, 123, 500);
+        shoulder.setTargetAngleAfter(0, 120, 500);
+
+        servo_claw.setTargetAfter(700, 85, 500);
+
+        osDelay(1000);
 
         hay_bale_put = true;
         break;
     case 4: // put to the 4 pos
         shoulder.setTargetAngleAfter(0, 80, 2000);
 
-        servo_base.setTargetAfter(2500, 214, 3000);
-        servo_rotate.setTargetAfter(2500, 130, 3000);
+        osDelay(1300);
 
-        osDelay(7000);
+        servo_base.setTargetAfter(2500, 212, 1000);
+        servo_rotate.setTargetAfter(2500, 130, 1000);
 
-        elbow.setTargetAngleAfter(0, 126, 3000);
-        shoulder.setTargetAngleAfter(0, 124, 3000);
+        osDelay(4000);
 
-        servo_claw.setTargetAfter(3000, 85, 500);
+        elbow.setTargetAngleAfter(0, 123, 500);
+        shoulder.setTargetAngleAfter(0, 140, 500);
+
+        osDelay(300);
+
+        servo_claw.setTargetAfter(700, 85, 500);
         
-        osDelay(3500);
+        osDelay(1000);
 
         hay_bale_put = true;
         break;
     case 5: // put to the 5 pos
+        shoulder.setTargetAngleAfter(0, 80, 2000);
+
+        osDelay(1300);
+
+        servo_base.setTargetAfter(2500, 167, 1000);
+        servo_wrist.setTargetAfter(2500, 25, 1000);
+        servo_rotate.setTargetAfter(2500, 60, 1000);
+
+        osDelay(3500);
+
+        shoulder.setTargetAngleAfter(0, 125, 1000);
+
+        osDelay(1000);
+
+        servo_claw.setTargetAfter(0, 85, 500);
+
+        osDelay(500);
+
+        hay_bale_put = true;
         break;
     case 6: // put to the 6 pos
+        shoulder.setTargetAngleAfter(0, 80, 2000);
+
+        osDelay(1300);
+
+        servo_base.setTargetAfter(2500, 205, 1000);
+        servo_wrist.setTargetAfter(2500, 0, 1000);
+        servo_rotate.setTargetAfter(2500, 60, 1000);
+
+        osDelay(3500);
+
+        shoulder.setTargetAngleAfter(0, 125, 1000);
+
+        osDelay(1000);
+
+        servo_claw.setTargetAfter(0, 85, 500);
+
+        osDelay(500);
+
+        hay_bale_put = true;
         break;
     case 7: // put to the 7 pos
         break;
