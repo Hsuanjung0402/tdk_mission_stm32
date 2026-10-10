@@ -297,7 +297,8 @@ void straw_pick_status_timer_cb(rcl_timer_t *timer, int64_t last_call_time) {
   straw_pick_status_msg.phase          = straw_pick_phase;
   straw_pick_status_msg.pick_count     = straw_pick_count;
   straw_pick_status_msg.armed          = straw_pick_armed;
-  straw_pick_status_msg.switch_pressed = straw_switch_pressed;
+  /* 開關上拉，straw_switch_pressed 存的是電位（按下 = false），發佈時反轉成「按下 = true」 */
+  straw_pick_status_msg.switch_pressed = !straw_switch_pressed;
   taskEXIT_CRITICAL();
 
   rcl_ret_t rc = rcl_publish(&straw_pick_status_pub, &straw_pick_status_msg, NULL);
