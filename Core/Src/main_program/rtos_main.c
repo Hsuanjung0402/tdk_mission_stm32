@@ -22,6 +22,7 @@
 #define shoulder_homing_switch GPIO_PIN_3 
 #define elbow_homing_switch GPIO_PIN_4 
 #define take_hay_bale 99
+#define fork_to_hay_bale_pos 11
 #define STRAW_SWITCH_DEBOUNCE_MS 25U
 
 int task_remain = 0, task02 = 0, task03 = 0;
@@ -194,6 +195,7 @@ void StartTask02(void *argument)
 		
 		case 10001:
 			mechanism_command_id = 0;
+			counter = 0; // 開賽 homing 時重設第三關放置號位
 			cpp_arm_homing();
 			break;
 		case 10002:
@@ -251,17 +253,16 @@ void StartTask02(void *argument)
 			}
 			straw_pick_phase = robot_interfaces__msg__StrawPickStatus__PHASE_PICKING;
 			counter++;
-			if( counter == 1 )cpp_fork_pos(1);
-			cpp_arm_script(take_hay_bale);
-			while(!hay_bale_took){
-				osDelay(1);
-			}
-			cpp_arm_script(counter);
-			while(!hay_bale_put){
-				cpp_arm_script(99);
-				if( counter >= 4 ){
-					cpp_fork_pos(2);
+			/* 只有 1~4 號位有腳本；第 5 捲起不做任何動作，直接回 IDLE（5~10 號位角度待機構組補） */
+			if( counter <= 4 ){
+				if( counter == 1 )cpp_fork_pos(1);
+				cpp_arm_script(take_hay_bale);
+				cpp_arm_script(counter);
+				cpp_arm_script(fork_to_hay_bale_pos);
+				if (counter % 3 == 0){
+					cpp_arm_mission_homing();
 				}
+				// TODO: fork 升到第 2 層（cpp_fork_pos(2)）的時機待定
 			}
 			taskENTER_CRITICAL();
 			straw_pick_count++;
@@ -272,7 +273,8 @@ void StartTask02(void *argument)
 	}
 }
 
-/* PD1 前方極限開關：每 1 ms 在 StartTask03 輪詢，電位穩定 STRAW_SWITCH_DEBOUNCE_MS 才採用。
+/* PD11 前方極限開關（上拉，按下 = LOW，所以 stable == false 代表按下）：
+ * 每 1 ms 在 StartTask03 輪詢，電位穩定 STRAW_SWITCH_DEBOUNCE_MS 才採用。
  * 只在「debounce 後的按下邊緣」且 armed、phase == IDLE 時送出 request，
  * 所以持續壓著不會重複觸發，必須先放開再按才會再觸發。 */
 
@@ -296,7 +298,7 @@ static void straw_switch_poll(void)
 	{
 		stable = raw;
 		straw_switch_pressed = stable;
-		if (stable && straw_pick_armed
+		if (!stable && straw_pick_armed
 			&& straw_pick_phase == robot_interfaces__msg__StrawPickStatus__PHASE_IDLE)
 		{
 			straw_pick_request = true;
